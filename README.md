@@ -12,6 +12,7 @@ The GitHub Actions workflow for this project is defined in the `.github/workflow
 4. **Build**: This step runs the `dotnet build --no-restore` command to build the project.
 5. **Run tests**: This step runs the `dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=TestResults/test_results.trx"` command to run the tests and collect code coverage data.
 6. **Publish test results**: This step uses the `actions/upload-artifact@v2` action to publish the test results. The test results are generated in the `TestResults` directory and uploaded as an artifact.
+7. **Test Reporter**: This step uses the `dorny/test-reporter@v1` action to report the test results in a more readable format.
 
 ### Example Workflow File
 
@@ -53,6 +54,13 @@ jobs:
       with:
         name: test-results
         path: TestResults
+
+    - name: Test Reporter
+      uses: dorny/test-reporter@v1
+      with:
+        name: test-results
+        path: TestResults/test_results.trx
+        reporter: dotnet-trx
 ```
 
 ### Viewing Test Results
