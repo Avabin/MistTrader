@@ -1,10 +1,11 @@
 ﻿using System.Buffers;
 using System.IO.MemoryMappedFiles;
 using System.Text.Json;
+using DataParsers.Models;
 
-namespace DataParsers;
+namespace DataParsers.Parsers;
 
-public class HighPerformanceParser : ITradesParser
+public class HighPerformanceTradesParser : ITradesParser
 {
     private static readonly JsonSerializerOptions Options = new()
     {

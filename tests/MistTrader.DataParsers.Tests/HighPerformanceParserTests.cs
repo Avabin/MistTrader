@@ -1,14 +1,16 @@
 using System.Text.Json;
 using DataParsers;
+using DataParsers.Models;
+using DataParsers.Parsers;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace MistTrader.DataParsers.Tests;
 
 [TestFixture]
-public class HighPerformanceParserTests
+public class HighPerformanceTradesParserTests
 {
-    private HighPerformanceParser _parser = null!;
+    private HighPerformanceTradesParser _tradesParser = null!;
     private string _sampleJson = null!;
     private byte[] _jsonBytes = null!;
     private string _tempFile = null!;
@@ -16,7 +18,7 @@ public class HighPerformanceParserTests
     [SetUp]
     public void Setup()
     {
-        _parser = new HighPerformanceParser();
+        _tradesParser = new HighPerformanceTradesParser();
         
         // Create sample test data
         var transactions = new[]
@@ -47,7 +49,7 @@ public class HighPerformanceParserTests
     public void ParseTransactions_WithValidJson_ShouldReturnTransactions()
     {
         // Act
-        var result = _parser.ParseTransactions(_jsonBytes);
+        var result = _tradesParser.ParseTransactions(_jsonBytes);
 
         // Assert
         result.Should().NotBeNull()
@@ -71,7 +73,7 @@ public class HighPerformanceParserTests
         var invalidJson = System.Text.Encoding.UTF8.GetBytes("{ invalid json }");
 
         // Act
-        var act = new Func<IReadOnlyList<Transaction>>(() => _parser.ParseTransactions(invalidJson));
+        var act = new Func<IReadOnlyList<Transaction>>(() => _tradesParser.ParseTransactions(invalidJson));
 
         // Assert
         act.Should().Throw<JsonException>();
@@ -81,7 +83,7 @@ public class HighPerformanceParserTests
     public void ParseFile_WithValidFile_ShouldReturnTransactions()
     {
         // Act
-        var result = _parser.ParseFile(_tempFile);
+        var result = _tradesParser.ParseFile(_tempFile);
 
         // Assert
         result.Should().NotBeNull()
@@ -106,7 +108,7 @@ public class HighPerformanceParserTests
         File.WriteAllText(invalidFile, "{ invalid json }");
 
         // Act
-        var act = new Func<IReadOnlyList<Transaction>>(() => _parser.ParseFile(invalidFile));
+        var act = new Func<IReadOnlyList<Transaction>>(() => _tradesParser.ParseFile(invalidFile));
 
         // Assert
         act.Should().Throw<JsonException>();

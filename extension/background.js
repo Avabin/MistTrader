@@ -39,8 +39,13 @@ function extractInventory(response) {
 
             // Find the part that contains the inventory items
             for (const part of parts) {
-                if (part.json?.[2]?.[0]?.[0]?.itemId) {
-                    return part.json[2][0][0];
+                // The inventory items are in json[2][0][0] in the last object
+                if (Array.isArray(part.json?.[2]?.[0]?.[0])) {
+                    const items = part.json[2][0][0];
+                    // Verify it's an inventory array by checking first item structure
+                    if (items[0] && 'itemId' in items[0] && 'count' in items[0]) {
+                        return items;
+                    }
                 }
             }
         }

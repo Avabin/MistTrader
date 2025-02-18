@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
+using DataParsers.Models;
 
-namespace DataParsers;
+namespace DataParsers.Parsers;
 
-public readonly ref struct HighPerformanceJsonParser
+public readonly ref struct HighPerformanceJsonTradesParser
 {
     private readonly ReadOnlySpan<byte> _json;
     private static readonly JsonReaderOptions ReaderOptions = new()
@@ -11,7 +12,7 @@ public readonly ref struct HighPerformanceJsonParser
         AllowTrailingCommas = true
     };
 
-    public HighPerformanceJsonParser(ReadOnlySpan<byte> json)
+    public HighPerformanceJsonTradesParser(ReadOnlySpan<byte> json)
     {
         _json = json;
     }

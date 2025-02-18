@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace DataParsers;
+namespace DataParsers.Models;
 
 public readonly ref struct TransactionBatch
 {

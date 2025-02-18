@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataParsers;
+namespace DataParsers.Models;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 public record Transaction

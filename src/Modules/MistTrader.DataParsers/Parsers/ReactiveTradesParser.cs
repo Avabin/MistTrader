@@ -1,11 +1,9 @@
-﻿using System.Buffers;
-using System.Reactive.Disposables;
-using System.Reactive.Subjects;
+﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 using System.Text.Json;
+using DataParsers.Models;
 
-namespace DataParsers;
+namespace DataParsers.Parsers;
 
 public class ReactiveTradesParser : IReactiveTradesParser
 {

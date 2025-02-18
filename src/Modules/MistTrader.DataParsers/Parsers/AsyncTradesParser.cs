@@ -1,15 +1,17 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using DataParsers.Models;
 
-namespace DataParsers;
+namespace DataParsers.Parsers;
 
-public class ExchangeFileParser : IAsyncTradesParser
+public class AsyncTradesParser : IAsyncTradesParser
 {
     private static readonly JsonSerializerOptions Options = new()
     {
         PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        TypeInfoResolver = JsonContext.Default
     };
 
     public async Task<IReadOnlyList<Transaction>> ParseTransactionsStreamAsync(Stream stream)

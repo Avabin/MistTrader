@@ -1,20 +1,22 @@
 using System.Text.Json;
 using DataParsers;
+using DataParsers.Models;
+using DataParsers.Parsers;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace MistTrader.DataParsers.Tests;
 
 [TestFixture]
-public class ExchangeFileParserTests
+public class AsyncTradesParserTests
 {
-    private ExchangeFileParser _parser = null!;
+    private AsyncTradesParser _parser = null!;
     private string _sampleJson = null!;
 
     [SetUp]
     public void Setup()
     {
-        _parser = new ExchangeFileParser();
+        _parser = new AsyncTradesParser();
         
         // Create sample test data
         var transactions = new[]
@@ -88,7 +90,7 @@ public class ExchangeFileParserTests
 
         // Act
         var transactions = await _parser.ParseTransactionsStreamAsync(stream);
-        var stats = TradeStatsCalculator.CalculateStats(transactions, 0);
+        var stats = TradeStatsCalculator.CalculateStats(transactions);
 
         // Assert
         stats.Should().ContainKey("CrystalWater")
@@ -153,7 +155,7 @@ public class ExchangeFileParserTests
         var emptyTransactions = Array.Empty<Transaction>();
 
         // Act
-        var stats = TradeStatsCalculator.CalculateStats(emptyTransactions, 0);
+        var stats = TradeStatsCalculator.CalculateStats(emptyTransactions);
 
         // Assert
         stats.Should().NotBeNull().And.BeEmpty();

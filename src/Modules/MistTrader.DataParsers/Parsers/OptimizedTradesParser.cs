@@ -1,9 +1,10 @@
 ﻿using System.Buffers;
 using System.Text.Json;
+using DataParsers.Models;
 
-namespace DataParsers;
+namespace DataParsers.Parsers;
 
-public class OptimizedExchangeParser
+public class OptimizedTradesParser
 {
     private static readonly JsonSerializerOptions Options = new()
     {

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Mistwood Exchange History</title>
     <style>
         body {
@@ -16,17 +17,30 @@
         }
         button {
             padding: 8px 16px;
-            background: #0366d6;
-            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            color: white;
+            font-weight: 500;
         }
-        button:hover {
-            background: #0255b3;
+        #exportBtn {
+            background: #2ea44f;
+        }
+        #exportBtn:hover {
+            background: #2c974b;
+        }
+        #clearBtn {
+            background: #d73a49;
+        }
+        #clearBtn:hover {
+            background: #cb2431;
         }
         #transactionCount {
             font-weight: bold;
+            padding: 4px 8px;
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
         }
         #logContainer {
             margin: 16px 0;
@@ -41,6 +55,8 @@
             margin: 4px 0;
             font-family: monospace;
             white-space: pre-wrap;
+            font-size: 12px;
+            line-height: 1.4;
         }
         #transactions, #inventory {
             white-space: pre-wrap;
@@ -50,23 +66,74 @@
             border: 1px solid #e1e4e8;
             border-radius: 4px;
             overflow-x: auto;
+            margin-bottom: 16px;
+            font-size: 12px;
+            line-height: 1.4;
         }
         .error { color: #cb2431; }
         .success { color: #22863a; }
         .info { color: #0366d6; }
         .warning { color: #b08800; }
+
+        /* Data section headers */
+        .section-header {
+            font-weight: bold;
+            margin: 16px 0 8px 0;
+            padding: 4px 8px;
+            background: #f1f8ff;
+            border: 1px solid #c8e1ff;
+            border-radius: 4px;
+            color: #0366d6;
+        }
+
+        /* Timestamps */
+        .timestamp {
+            color: #586069;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        /* Collapsible sections */
+        .collapse-btn {
+            background: none;
+            border: none;
+            color: #0366d6;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 8px;
+        }
+
+        .collapsed {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div class="controls">
-    <button id="downloadBtn">Download Transactions</button>
-    <button id="downloadInventoryBtn">Download Inventory</button>
+    <button id="exportBtn">Export Data</button>
     <button id="clearBtn">Clear All</button>
     <span id="transactionCount">Transactions: 0</span>
 </div>
+
+<div class="section-header">
+    <button class="collapse-btn" data-target="logContainer">►</button>
+    Logs
+</div>
 <div id="logContainer"></div>
+
+<div class="section-header">
+    <button class="collapse-btn" data-target="transactions">►</button>
+    Transactions
+</div>
 <div id="transactions"></div>
+
+<div class="section-header">
+    <button class="collapse-btn" data-target="inventory">►</button>
+    Inventory
+</div>
 <div id="inventory"></div>
+
+<script src="lib/jszip.min.js"></script>
 <script src="panel.js" type="module"></script>
 </body>
 </html>

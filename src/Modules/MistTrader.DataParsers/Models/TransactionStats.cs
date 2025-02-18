@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataParsers;
+namespace DataParsers.Models;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 public record TransactionStats
@@ -22,3 +22,4 @@ public record TransactionStats
     public required long TotalEarned { get; init; }
     public required long ProfitLoss { get; init; }
 }
+

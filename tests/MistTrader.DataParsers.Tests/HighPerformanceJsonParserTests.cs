@@ -1,12 +1,14 @@
 using System.Text.Json;
 using DataParsers;
+using DataParsers.Models;
+using DataParsers.Parsers;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace MistTrader.DataParsers.Tests;
 
 [TestFixture]
-public class HighPerformanceJsonParserTests
+public class HighPerformanceJsonTradesParserTests
 {
     private string _sampleJson = null!;
     private byte[] _jsonBytes = null!;
@@ -31,7 +33,7 @@ public class HighPerformanceJsonParserTests
     public void GetEnumerator_WithValidJson_ShouldReturnTransactions()
     {
         // Arrange
-        var parser = new HighPerformanceJsonParser(_jsonBytes);
+        var parser = new HighPerformanceJsonTradesParser(_jsonBytes);
 
         // Act
         var result = parser.ToList();
@@ -58,7 +60,7 @@ public class HighPerformanceJsonParserTests
         var invalidJson = "{ invalid json }"u8.ToArray();
 
         // Act
-        var act = new Action(() => new HighPerformanceJsonParser(invalidJson).ToList());
+        var act = new Action(() => new HighPerformanceJsonTradesParser(invalidJson).ToList());
 
         // Assert
         act.Should().Throw<JsonException>();

@@ -1,17 +1,16 @@
-﻿
+﻿using DataParsers.Models;
+
 namespace DataParsers;
 
 public static class TradeStatsCalculator
 {
-    public static Dictionary<string, TransactionStats> CalculateStats(IEnumerable<Transaction> transactions, long myBreederId)
+    public static Dictionary<string, TransactionStats> CalculateStats(IEnumerable<Transaction> transactions)
     {
         var stats = new Dictionary<string, TransactionStats>();
 
         foreach (var transaction in transactions)
         {
             var itemId = transaction.SellOffer.ItemId;
-            var isBuying = transaction.BuyOffer.BreederId == myBreederId;
-            var isSelling = transaction.SellOffer.BreederId == myBreederId;
 
             if (!stats.TryGetValue(itemId, out var currentStats))
             {
@@ -26,12 +25,11 @@ public static class TradeStatsCalculator
                     AveragePrice = transaction.Silver,
                     FirstTransaction = transaction.CreatedAt,
                     LastTransaction = transaction.CreatedAt,
-                    TotalBought = isBuying ? transaction.Count : 0,
-                    TotalSpent = isBuying ? transaction.Count * transaction.Silver : 0,
-                    TotalSold = isSelling ? transaction.Count : 0,
-                    TotalEarned = isSelling ? transaction.Count * transaction.Silver : 0,
-                    ProfitLoss = (isSelling ? transaction.Count * transaction.Silver : 0) - 
-                                (isBuying ? transaction.Count * transaction.Silver : 0)
+                    TotalBought = 0,
+                    TotalSpent = 0,
+                    TotalSold = 0,
+                    TotalEarned = 0,
+                    ProfitLoss = 0
                 };
                 continue;
             }
@@ -47,21 +45,50 @@ public static class TradeStatsCalculator
                 MaxPrice = Math.Max(currentStats.MaxPrice, transaction.Silver),
                 TotalVolume = newTotalVolume,
                 AveragePrice = (double)newTotalVolume / newTotalCount,
-                FirstTransaction = transaction.CreatedAt < currentStats.FirstTransaction 
-                    ? transaction.CreatedAt 
+                FirstTransaction = transaction.CreatedAt < currentStats.FirstTransaction
+                    ? transaction.CreatedAt
                     : currentStats.FirstTransaction,
-                LastTransaction = transaction.CreatedAt > currentStats.LastTransaction 
-                    ? transaction.CreatedAt 
-                    : currentStats.LastTransaction,
-                TotalBought = currentStats.TotalBought + (isBuying ? transaction.Count : 0),
-                TotalSpent = currentStats.TotalSpent + (isBuying ? transaction.Count * transaction.Silver : 0),
-                TotalSold = currentStats.TotalSold + (isSelling ? transaction.Count : 0),
-                TotalEarned = currentStats.TotalEarned + (isSelling ? transaction.Count * transaction.Silver : 0),
-                ProfitLoss = (currentStats.TotalEarned + (isSelling ? transaction.Count * transaction.Silver : 0)) -
-                            (currentStats.TotalSpent + (isBuying ? transaction.Count * transaction.Silver : 0))
+                LastTransaction = transaction.CreatedAt > currentStats.LastTransaction
+                    ? transaction.CreatedAt
+                    : currentStats.LastTransaction
             };
         }
 
         return stats;
+    }
+
+    public static Dictionary<string, TransactionStats> CalculatePersonalStats(
+        this Dictionary<string, TransactionStats> marketStats,
+        IEnumerable<Transaction> transactions,
+        long breederId)
+    {
+        var personalStats = new Dictionary<string, TransactionStats>();
+
+        foreach (var (itemId, marketStat) in marketStats)
+        {
+            var itemTransactions = transactions.Where(t => t.SellOffer.ItemId == itemId).ToList();
+            var bought = itemTransactions
+                .Where(t => t.BuyOffer.BreederId == breederId)
+                .ToList();
+            var sold = itemTransactions
+                .Where(t => t.SellOffer.BreederId == breederId)
+                .ToList();
+
+            var totalBought = bought.Sum(t => t.Count);
+            var totalSpent = bought.Sum(t => t.Count * t.Silver);
+            var totalSold = sold.Sum(t => t.Count);
+            var totalEarned = sold.Sum(t => t.Count * t.Silver);
+
+            personalStats[itemId] = marketStat with
+            {
+                TotalBought = totalBought,
+                TotalSpent = totalSpent,
+                TotalSold = totalSold,
+                TotalEarned = totalEarned,
+                ProfitLoss = totalEarned - totalSpent
+            };
+        }
+
+        return personalStats;
     }
 }

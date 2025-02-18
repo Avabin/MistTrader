@@ -1,9 +1,11 @@
 ﻿using DataParsers;
 using System.Reactive.Linq;
+using DataParsers.Loaders;
+using DataParsers.Parsers;
 
 if (args.Length < 1)
 {
-    Console.WriteLine("Usage: MistTrader.Console <path-to-json-file>");
+    Console.WriteLine("Usage: MistTrader.Console <path-to-zip-file>");
     return;
 }
 
@@ -15,14 +17,17 @@ if (!File.Exists(filePath))
     return;
 }
 
-var parser = new ReactiveTradesParser();
+IAsyncTradesParser parser = new AsyncTradesParser();
+ZipLoader loader = new(parser);
 
 try
 {
     using var file = File.OpenRead(filePath);
-    var stats = await parser.CalculateStatsReactive(file)
-        .LastOrDefaultAsync()
-        ?? new Dictionary<string, TransactionStats>();
+    var transactions = await loader.LoadTransactionsFromZip(file);
+    var stats = TradeStatsCalculator.CalculateStats(transactions);
+
+    stats = stats.CalculatePersonalStats(transactions, 6305);
+    
 
     if (!stats.Any())
     {

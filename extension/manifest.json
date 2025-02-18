@@ -1,14 +1,19 @@
 ﻿{
   "manifest_version": 3,
   "name": "Mistwood Exchange History Tracker",
-  "version": "1.0",
-  "description": "Captures and stores transaction history from Mistwood Exchange",
+  "version": "1.0.1",
+  "description": "Captures and stores transaction history and inventory data from Mistwood Exchange",
   "permissions": [
     "storage",
-    "downloads"
+    "downloads",
+    "debugger"
   ],
   "host_permissions": [
     "https://mistwood.pl/*"
   ],
-  "devtools_page": "devtools.html"
+  "devtools_page": "devtools.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
 }

@@ -1,4 +1,6 @@
-﻿namespace DataParsers;
+﻿using DataParsers.Models;
+
+namespace DataParsers;
 
 public interface ITradesParser
 {

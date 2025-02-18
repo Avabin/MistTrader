@@ -3,6 +3,8 @@ using DataParsers;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Reactive.Linq;
+using DataParsers.Models;
+using DataParsers.Parsers;
 
 namespace MistTrader.DataParsers.Tests;
 
@@ -153,7 +155,7 @@ public class ReactiveTradesParserTests
         var emptyTransactions = Array.Empty<Transaction>();
 
         // Act
-        var stats = TradeStatsCalculator.CalculateStats(emptyTransactions, 0);
+        var stats = TradeStatsCalculator.CalculateStats(emptyTransactions);
 
         // Assert
         stats.Should().NotBeNull().And.BeEmpty();

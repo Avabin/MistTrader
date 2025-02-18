@@ -5,6 +5,8 @@ using System.Text.Json;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 using DataParsers;
+using DataParsers.Models;
+using DataParsers.Parsers;
 
 namespace MistTrader.Benchmarks;
 
@@ -36,8 +38,8 @@ public class ExchangeParserBenchmarks
         "The ExchangeFileParser types use reflection and may require dynamic code generation.")]
     public void Setup()
     {
-        _asyncParser = new ExchangeFileParser();
-        _highPerformanceParser = new HighPerformanceParser();
+        _asyncParser = new AsyncTradesParser();
+        _highPerformanceParser = new HighPerformanceTradesParser();
         _reactiveParser = new ReactiveTradesParser();
 
         var transactions = GenerateTransactions(TransactionCount);
@@ -105,7 +107,7 @@ public class ExchangeParserBenchmarks
     [Benchmark]
     public int ParseHighPerformanceJson()
     {
-        var parser = new HighPerformanceJsonParser(_jsonBytes);
+        var parser = new HighPerformanceJsonTradesParser(_jsonBytes);
         var count = 0;
         foreach (var transaction in parser)
         {
