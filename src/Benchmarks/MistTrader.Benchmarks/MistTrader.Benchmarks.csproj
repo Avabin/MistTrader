@@ -9,4 +9,12 @@
         <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Modules\MistTrader.DataParsers\MistTrader.DataParsers.csproj" />
+    </ItemGroup>
+
 </Project>

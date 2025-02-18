@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Mistwood Exchange History</title>
+    <style>
+        body {
+            padding: 16px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .controls {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0366d6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0255b3;
+        }
+        #transactionCount {
+            font-weight: bold;
+        }
+        #logContainer {
+            margin: 16px 0;
+            padding: 8px;
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 4px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        #transactions {
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: #f6f8fa;
+            padding: 16px;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error { color: #cb2431; }
+        .success { color: #22863a; }
+        .info { color: #0366d6; }
+        .warning { color: #b08800; }
+    </style>
+</head>
+<body>
+<div class="controls">
+    <button id="downloadBtn">Download Transactions</button>
+    <button id="clearBtn">Clear All</button>
+    <span id="transactionCount">Transactions: 0</span>
+</div>
+<div id="logContainer"></div>
+<div id="transactions"></div>
+<script src="panel.js" type="module"></script>
+</body>
+</html>

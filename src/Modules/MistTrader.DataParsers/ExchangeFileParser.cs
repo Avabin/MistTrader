@@ -1,9 +1,10 @@
-﻿
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 
 namespace DataParsers;
 
-public class ExchangeFileParser
+public class ExchangeFileParser : IAsyncTradesParser
 {
     private static readonly JsonSerializerOptions Options = new()
     {
@@ -11,52 +12,75 @@ public class ExchangeFileParser
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async Task<IReadOnlyList<Transaction>> ParseTransactionsFileAsync(string filePath)
+    public async Task<IReadOnlyList<Transaction>> ParseTransactionsStreamAsync(Stream stream)
     {
-        await using var fileStream = File.OpenRead(filePath);
-        return await ParseTransactionsStreamAsync(fileStream);
+        var result = new List<Transaction>();
+        await foreach (var transaction in StreamTransactionsAsync(stream))
+        {
+            result.Add(transaction);
+        }
+        return result;
     }
 
-    public async Task<IReadOnlyList<Transaction>> ParseTransactionsStreamAsync(Stream jsonStream)
+    public async IAsyncEnumerable<Transaction> StreamTransactionsAsync(Stream stream, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        try
+        var jsonReader = new StreamReader(stream);
+        
+        // Read until we find the opening bracket
+        while (!jsonReader.EndOfStream && (char)jsonReader.Read() != '[') { }
+        
+        var buffer = new char[4096];
+        var currentObject = new StringBuilder();
+        var braceCount = 0;
+        var inString = false;
+        var escapeNext = false;
+        var parsingObject = false;
+        
+        while (!jsonReader.EndOfStream && !cancellationToken.IsCancellationRequested)
         {
-            var transactions = await JsonSerializer.DeserializeAsync<Transaction[]>(
-                jsonStream, 
-                Options);
+            var readCount = await jsonReader.ReadAsync(buffer);
+            
+            for (var i = 0; i < readCount && !cancellationToken.IsCancellationRequested; i++)
+            {
+                var c = buffer[i];
                 
-            return transactions ?? Array.Empty<Transaction>();
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"Error parsing transactions file: {ex.Message}");
-            return Array.Empty<Transaction>();
-        }
-    }
-    
-    public async Task<IReadOnlyDictionary<string, TransactionStats>> CalculateStatsAsync(string filePath)
-    {
-        var transactions = await ParseTransactionsFileAsync(filePath);
-        return CalculateStats(transactions);
-    }
-    
-    private static IReadOnlyDictionary<string, TransactionStats> CalculateStats(IEnumerable<Transaction> transactions)
-    {
-        return transactions
-            .GroupBy(t => t.SellOffer.ItemId)
-            .ToDictionary(
-                g => g.Key,
-                g => new TransactionStats
+                if (c == '"' && !escapeNext)
                 {
-                    ItemId = g.Key,
-                    TotalCount = g.Sum(t => t.Count),
-                    TotalVolume = g.Sum(t => t.Count * t.Silver),
-                    AveragePrice = g.Average(t => t.Silver),
-                    MinPrice = g.Min(t => t.Silver),
-                    MaxPrice = g.Max(t => t.Silver),
-                    TransactionCount = g.Count(),
-                    FirstTransaction = g.Min(t => t.CreatedAt),
-                    LastTransaction = g.Max(t => t.CreatedAt)
-                });
+                    inString = !inString;
+                }
+                escapeNext = c == '\\' && !escapeNext;
+
+                if (!inString)
+                {
+                    if (c == '{')
+                    {
+                        braceCount++;
+                        parsingObject = true;
+                    }
+                    else if (c == '}')
+                    {
+                        braceCount--;
+                    }
+                }
+
+                if (parsingObject)
+                {
+                    currentObject.Append(c);
+                }
+                
+                if (parsingObject && braceCount == 0)
+                {
+                    var jsonStr = currentObject.ToString();
+                    var transaction = JsonSerializer.Deserialize<Transaction>(jsonStr, Options);
+                    if (transaction != null)
+                    {
+                        yield return transaction;
+                    }
+                    
+                    currentObject.Clear();
+                    parsingObject = false;
+                }
+            }
+        }
     }
 }

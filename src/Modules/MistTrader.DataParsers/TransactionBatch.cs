@@ -1,4 +1,6 @@
-﻿namespace DataParsers;
+﻿using System.Text.Json;
+
+namespace DataParsers;
 
 public readonly ref struct TransactionBatch
 {
@@ -15,7 +17,7 @@ public readonly ref struct TransactionBatch
 
     public ref struct Enumerator
     {
-        private readonly Utf8JsonReader _reader;
+        private Utf8JsonReader _reader;
         private Transaction? _current;
 
         internal Enumerator(ReadOnlySpan<byte> data)

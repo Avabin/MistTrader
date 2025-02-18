@@ -2,7 +2,9 @@
 
 namespace DataParsers;
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(
+    WriteIndented = true
+)]
 [JsonSerializable(typeof(List<Transaction>))]
 [JsonSerializable(typeof(Transaction))]
 [JsonSerializable(typeof(BreederOffer))]

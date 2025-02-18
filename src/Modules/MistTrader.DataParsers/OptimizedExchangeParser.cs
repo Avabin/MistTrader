@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Buffers;
+using System.Text.Json;
 
 namespace DataParsers;
 
@@ -18,9 +19,9 @@ public class OptimizedExchangeParser
         // Skip whitespace and find opening bracket
         var start = json.IndexOf('[');
         if (start == -1) return Array.Empty<Transaction>();
-        
+
         json = json[(start + 1)..];
-        
+
         var result = new List<Transaction>();
         var currentDepth = 0;
         var objectStart = -1;
@@ -48,8 +49,10 @@ public class OptimizedExchangeParser
                             {
                                 result.Add(transaction);
                             }
+
                             objectStart = -1;
                         }
+
                         break;
                     case '"':
                         inString = true;
@@ -62,6 +65,7 @@ public class OptimizedExchangeParser
                 {
                     inString = false;
                 }
+
                 escapeNext = c == '\\' && !escapeNext;
             }
         }
@@ -72,7 +76,7 @@ public class OptimizedExchangeParser
     public IReadOnlyList<Transaction> ParseFile(string filePath)
     {
         var fileInfo = new FileInfo(filePath);
-        
+
         if (!fileInfo.Exists)
             return Array.Empty<Transaction>();
 
@@ -119,3 +123,4 @@ public class OptimizedExchangeParser
             return false;
         }
     }
+}

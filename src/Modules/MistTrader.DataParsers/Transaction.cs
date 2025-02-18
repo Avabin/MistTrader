@@ -2,10 +2,11 @@
 
 namespace DataParsers;
 
-public readonly record struct Transaction
+[JsonSourceGenerationOptions(WriteIndented = true)]
+public record Transaction
 {
     [JsonPropertyName("id")]
-    public required int Id { get; init; }
+    public required long Id { get; init; }
     
     [JsonPropertyName("maker")]
     public required string Maker { get; init; }
@@ -23,5 +24,5 @@ public readonly record struct Transaction
     public required DateTime CreatedAt { get; init; }
     
     [JsonPropertyName("silver")]
-    public required int Silver { get; init; }
+    public required long Silver { get; init; }
 }
