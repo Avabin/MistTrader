@@ -10,7 +10,7 @@ The GitHub Actions workflow for this project is defined in the `.github/workflow
 2. **Setup .NET**: This step uses the `actions/setup-dotnet@v1` action to set up a .NET environment with the specified version.
 3. **Restore dependencies**: This step runs the `dotnet restore` command to restore the project's dependencies.
 4. **Build**: This step runs the `dotnet build --no-restore` command to build the project.
-5. **Run tests**: This step runs the `dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"` command to run the tests and collect code coverage data.
+5. **Run tests**: This step runs the `dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=TestResults/test_results.trx"` command to run the tests and collect code coverage data.
 6. **Publish test results**: This step uses the `actions/upload-artifact@v2` action to publish the test results. The test results are generated in the `TestResults` directory and uploaded as an artifact.
 
 ### Example Workflow File
