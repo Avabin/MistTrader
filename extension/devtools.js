@@ -51,6 +51,29 @@ chrome.devtools.network.onRequestFinished.addListener(
                         }
                     }
                 });
+            } else if (request.request.url.includes('mistwood.pl/api/trpc/inventory')) {
+                console.log('[Mistwood Extension] Captured inventory request:', request.request.url);
+
+                // Get the response body
+                request.getContent((content, encoding) => {
+                    if (content) {
+                        console.log('[Mistwood Extension] Got inventory response content, sending to panel');
+                        // Create a custom event to send to the panel
+                        const event = new CustomEvent('newInventoryData', {
+                            detail: {
+                                type: 'NEW_INVENTORY_RESPONSE',
+                                data: content,
+                                timestamp: new Date().toISOString(),
+                                url: request.request.url
+                            }
+                        });
+
+                        // Send to panel window if available
+                        if (panelWindow) {
+                            panelWindow.dispatchEvent(event);
+                        }
+                    }
+                });
             }
         } catch (error) {
             console.error('[Mistwood Extension] Error processing request:', error);
