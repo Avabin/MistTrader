@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Mistwood Exchange History</title>
@@ -42,7 +42,7 @@
             font-family: monospace;
             white-space: pre-wrap;
         }
-        #transactions {
+        #transactions, #inventory {
             white-space: pre-wrap;
             font-family: monospace;
             background: #f6f8fa;
@@ -60,11 +60,13 @@
 <body>
 <div class="controls">
     <button id="downloadBtn">Download Transactions</button>
+    <button id="downloadInventoryBtn">Download Inventory</button>
     <button id="clearBtn">Clear All</button>
     <span id="transactionCount">Transactions: 0</span>
 </div>
 <div id="logContainer"></div>
 <div id="transactions"></div>
+<div id="inventory"></div>
 <script src="panel.js" type="module"></script>
 </body>
 </html>

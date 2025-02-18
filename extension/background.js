@@ -1,4 +1,5 @@
 ﻿let transactions = [];
+let inventory = [];
 let debuggeeId = null;
 
 // Function to extract transactions from response
@@ -16,6 +17,30 @@ function extractTransactions(response) {
             for (const part of parts) {
                 if (part.json?.[2]?.[0]?.[0]?.items) {
                     return part.json[2][0][0].items;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error parsing response:', error);
+    }
+    return null;
+}
+
+// Function to extract inventory from response
+function extractInventory(response) {
+    try {
+        if (typeof response === 'string') {
+            // Split the response by '}' and process each part
+            const parts = response.split('}{').map((part, index) => {
+                if (index > 0) part = '{' + part;
+                if (index < response.split('}{').length - 1) part = part + '}';
+                return JSON.parse(part);
+            });
+
+            // Find the part that contains the inventory items
+            for (const part of parts) {
+                if (part.json?.[2]?.[0]?.[0]?.itemId) {
+                    return part.json[2][0][0];
                 }
             }
         }
@@ -59,6 +84,24 @@ chrome.debugger.onEvent.addListener((source, method, params) => {
                     }
                 }
             );
+        } else if (response.url.includes('mistwood.pl/api/trpc/inventory')) {
+            chrome.debugger.sendCommand(
+                source,
+                'Network.getResponseBody',
+                { requestId },
+                function(response) {
+                    if (response && response.body) {
+                        const newInventory = extractInventory(response.body);
+                        if (newInventory) {
+                            inventory = newInventory;
+                            chrome.runtime.sendMessage({
+                                type: 'NEW_INVENTORY',
+                                inventory: newInventory
+                            });
+                        }
+                    }
+                }
+            );
         }
     }
 });
@@ -80,6 +123,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.type === 'CLEAR_TRANSACTIONS') {
         transactions = [];
         sendResponse({ success: true });
+    } else if (message.type === 'GET_INVENTORY') {
+        sendResponse(inventory);
     }
     return true;
 });
