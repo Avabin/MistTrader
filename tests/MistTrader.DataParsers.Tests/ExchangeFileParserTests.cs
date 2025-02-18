@@ -147,6 +147,131 @@ public class ExchangeFileParserTests
         stats.Should().NotBeNull().And.BeEmpty();
     }
 
+    [Test]
+    public async Task ParseTransactionsFileAsync_WithValidFile_ShouldReturnTransactions()
+    {
+        // Arrange
+        var filePath = Path.GetTempFileName();
+        await File.WriteAllTextAsync(filePath, _sampleJson);
+
+        // Act
+        var result = await _parser.ParseTransactionsFileAsync(filePath);
+
+        // Assert
+        result.Should().NotBeNull()
+              .And.HaveCount(4)
+              .And.BeInAscendingOrder(t => t.Id);
+
+        var firstTransaction = result.First();
+        firstTransaction.Should().BeEquivalentTo(new
+        {
+            Id = 1,
+            SellOffer = new { ItemId = "CrystalWater", Silver = 70 },
+            Count = 10,
+            CreatedAt = DateTime.Parse("2025-02-17T20:00:00Z")
+        }, options => options.ExcludingMissingMembers());
+
+        File.Delete(filePath);
+    }
+
+    [Test]
+    public async Task CalculateStatsAsync_WithValidFile_ShouldReturnCorrectStatistics()
+    {
+        // Arrange
+        var filePath = Path.GetTempFileName();
+        await File.WriteAllTextAsync(filePath, _sampleJson);
+
+        // Act
+        var stats = await _parser.CalculateStatsAsync(filePath);
+
+        // Assert
+        stats.Should().ContainKey("CrystalWater")
+             .And.ContainKey("PandoraBox");
+
+        var crystalWaterStats = stats["CrystalWater"];
+        crystalWaterStats.Should().BeEquivalentTo(new TransactionStats
+        {
+            ItemId = "CrystalWater",
+            TotalCount = 30, // 10 + 5 + 15
+            TotalVolume = 70 * 10 + 75 * 5 + 80 * 15, // 700 + 375 + 1200 = 2275
+            AveragePrice = (70 * 10 + 75 * 5 + 80 * 15) / 30.0,
+            MinPrice = 70,
+            MaxPrice = 80,
+            TransactionCount = 3,
+            FirstTransaction = DateTime.Parse("2025-02-17T20:00:00Z"),
+            LastTransaction = DateTime.Parse("2025-02-17T20:20:00Z")
+        });
+
+        var pandoraBoxStats = stats["PandoraBox"];
+        pandoraBoxStats.Should().BeEquivalentTo(new TransactionStats
+        {
+            ItemId = "PandoraBox",
+            TotalCount = 1,
+            TotalVolume = 130000,
+            AveragePrice = 130000,
+            MinPrice = 130000,
+            MaxPrice = 130000,
+            TransactionCount = 1,
+            FirstTransaction = DateTime.Parse("2025-02-17T20:15:00Z"),
+            LastTransaction = DateTime.Parse("2025-02-17T20:15:00Z")
+        });
+
+        File.Delete(filePath);
+    }
+
+    [Test]
+    public async Task ParseTransactionsFileAsync_WithEmptyFile_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var filePath = Path.GetTempFileName();
+
+        // Act
+        var result = await _parser.ParseTransactionsFileAsync(filePath);
+
+        // Assert
+        result.Should().NotBeNull().And.BeEmpty();
+
+        File.Delete(filePath);
+    }
+
+    [Test]
+    public async Task ParseTransactionsFileAsync_WithInvalidJson_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var filePath = Path.GetTempFileName();
+        await File.WriteAllTextAsync(filePath, "{ invalid json }");
+
+        // Act
+        var result = await _parser.ParseTransactionsFileAsync(filePath);
+
+        // Assert
+        result.Should().NotBeNull().And.BeEmpty();
+
+        File.Delete(filePath);
+    }
+
+    [Test]
+    public async Task ParseTransactionsFileAsync_WithLargeFile_ShouldReturnTransactions()
+    {
+        // Arrange
+        var largeTransactions = Enumerable.Range(1, 10000)
+            .Select(i => CreateTransaction(i, "Item" + i, 100, 100 + i, 1, "2025-02-17T20:00:00Z"))
+            .ToArray();
+        var largeJson = JsonSerializer.Serialize(largeTransactions);
+        var filePath = Path.GetTempFileName();
+        await File.WriteAllTextAsync(filePath, largeJson);
+
+        // Act
+        var result = await _parser.ParseTransactionsFileAsync(filePath);
+
+        // Assert
+        result.Should().NotBeNull()
+              .And.HaveCount(10000)
+              .And.BeInAscendingOrder(t => t.Id);
+
+        File.Delete(filePath);
+    }
+
     private static Transaction CreateTransaction(
         int id, 
         string itemId, 
