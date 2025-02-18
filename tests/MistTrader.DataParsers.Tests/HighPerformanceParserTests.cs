@@ -65,16 +65,16 @@ public class HighPerformanceParserTests
     }
 
     [Test]
-    public void ParseTransactions_WithInvalidJson_ShouldReturnEmptyList()
+    public void ParseTransactions_WithInvalidJson_ShouldThrowJsonException()
     {
         // Arrange
         var invalidJson = System.Text.Encoding.UTF8.GetBytes("{ invalid json }");
 
         // Act
-        var result = _parser.ParseTransactions(invalidJson);
+        var act = new Func<IReadOnlyList<Transaction>>(() => _parser.ParseTransactions(invalidJson));
 
         // Assert
-        result.Should().NotBeNull().And.BeEmpty();
+        act.Should().Throw<JsonException>();
     }
 
     [Test]
@@ -99,17 +99,17 @@ public class HighPerformanceParserTests
     }
 
     [Test]
-    public void ParseFile_WithInvalidFile_ShouldReturnEmptyList()
+    public void ParseFile_WithInvalidFile_ShouldThrowJsonException()
     {
         // Arrange
         var invalidFile = Path.GetTempFileName();
         File.WriteAllText(invalidFile, "{ invalid json }");
 
         // Act
-        var result = _parser.ParseFile(invalidFile);
+        var act = new Func<IReadOnlyList<Transaction>>(() => _parser.ParseFile(invalidFile));
 
         // Assert
-        result.Should().NotBeNull().And.BeEmpty();
+        act.Should().Throw<JsonException>();
 
         // Cleanup
         File.Delete(invalidFile);

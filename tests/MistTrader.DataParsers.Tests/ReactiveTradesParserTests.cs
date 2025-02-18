@@ -58,7 +58,7 @@ public class ReactiveTradesParserTests
     }
 
     [Test]
-    public async Task ParseTransactionsReactive_WithInvalidJson_ShouldReturnEmptyList()
+    public async Task ParseTransactionsReactive_WithInvalidJson_ShouldThrowJsonException()
     {
         // Arrange
         var invalidJson = "{ invalid json }";
@@ -69,10 +69,10 @@ public class ReactiveTradesParserTests
         stream.Position = 0;
 
         // Act
-        var result = await _parser.ParseTransactionsReactive(stream).ToList();
+        var act = new Func<Task>(async () => await _parser.ParseTransactionsReactive(stream).ToList());
 
         // Assert
-        result.Should().NotBeNull().And.BeEmpty();
+        await act.Should().ThrowAsync<JsonException>();
     }
 
     [Test]
@@ -134,16 +134,16 @@ public class ReactiveTradesParserTests
     }
 
     [Test]
-    public async Task ParseTransactionsReactive_WithEmptyStream_ShouldReturnEmptyList()
+    public async Task ParseTransactionsReactive_WithEmptyStream_ShouldThrowJsonException()
     {
         // Arrange
         using var stream = new MemoryStream();
 
         // Act
-        var result = await _parser.ParseTransactionsReactive(stream).ToList();
+        var act = new Func<Task>(async () => await _parser.ParseTransactionsReactive(stream).ToList());
 
         // Assert
-        result.Should().NotBeNull().And.BeEmpty();
+        await act.Should().ThrowAsync<JsonException>();
     }
 
     [Test]

@@ -52,17 +52,16 @@ public class HighPerformanceJsonParserTests
     }
 
     [Test]
-    public void GetEnumerator_WithInvalidJson_ShouldReturnEmptyList()
+    public void GetEnumerator_WithInvalidJson_ShouldThrowJsonException()
     {
         // Arrange
-        var invalidJson = System.Text.Encoding.UTF8.GetBytes("{ invalid json }");
-        var parser = new HighPerformanceJsonParser(invalidJson);
+        var invalidJson = "{ invalid json }"u8.ToArray();
 
         // Act
-        var result = parser.ToList();
+        var act = new Action(() => new HighPerformanceJsonParser(invalidJson).ToList());
 
         // Assert
-        result.Should().NotBeNull().And.BeEmpty();
+        act.Should().Throw<JsonException>();
     }
 
     private static Transaction CreateTransaction(
