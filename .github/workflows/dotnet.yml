@@ -1,5 +1,7 @@
 name: .NET
 
+permissions:
+  checks: write
 on:
   push:
     branches: [ main ]
