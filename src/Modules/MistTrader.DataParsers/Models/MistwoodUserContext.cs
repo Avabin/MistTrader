@@ -8,12 +8,17 @@ public record MistwoodUserContext
     /// <summary>
     /// The breeder ID of the user
     /// </summary>
-    public required long BreederId { get; init; }
+    public long BreederId => Profile.Id;
     
     /// <summary>
     /// The username of the user
     /// </summary>
-    public required string Username { get; init; }
+    public string Username => Profile.Name;
+    
+    /// <summary>
+    /// The user's profile data
+    /// </summary>
+    public required Profile Profile { get; init; }
     
     /// <summary>
     /// List of all transactions associated with the user
@@ -86,15 +91,12 @@ public record MistwoodUserContext
     /// <summary>
     /// Creates an empty context for a user
     /// </summary>
-    public static MistwoodUserContext CreateEmpty(long breederId, string username)
-    {
-        return new MistwoodUserContext
+    public static MistwoodUserContext CreateEmpty() =>
+        new()
         {
-            BreederId = breederId,
-            Username = username,
             Transactions = Array.Empty<Transaction>(),
             Inventory = Array.Empty<InventoryItem>(),
+            Profile = Profile.CreateEmpty(),
             LastUpdated = DateTime.UtcNow
         };
-    }
 }
