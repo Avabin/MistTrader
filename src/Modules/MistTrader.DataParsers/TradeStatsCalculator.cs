@@ -1,4 +1,5 @@
 ﻿using DataParsers.Models;
+using System.Linq;
 
 namespace DataParsers;
 
@@ -25,6 +26,9 @@ public static class TradeStatsCalculator
                     AveragePrice = transaction.Silver,
                     FirstTransaction = transaction.CreatedAt,
                     LastTransaction = transaction.CreatedAt,
+                    MedianPrice = transaction.Silver,
+                    StandardDeviation = 0,
+                    TotalTransactionValue = transaction.Silver * transaction.Count,
                     TotalBought = 0,
                     TotalSpent = 0,
                     TotalSold = 0,
@@ -36,21 +40,34 @@ public static class TradeStatsCalculator
 
             var newTotalCount = currentStats.TotalCount + transaction.Count;
             var newTotalVolume = currentStats.TotalVolume + (transaction.Silver * transaction.Count);
+            var newTransactionCount = currentStats.TransactionCount + 1;
+            var newAveragePrice = (double)newTotalVolume / newTotalCount;
+
+            var prices = transactions.Where(t => t.SellOffer.ItemId == itemId).Select(t => t.Silver).OrderBy(p => p).ToList();
+            var medianPrice = prices.Count % 2 == 0
+                ? (prices[prices.Count / 2 - 1] + prices[prices.Count / 2]) / 2.0
+                : prices[prices.Count / 2];
+
+            var variance = prices.Average(p => Math.Pow(p - newAveragePrice, 2));
+            var standardDeviation = Math.Sqrt(variance);
 
             stats[itemId] = currentStats with
             {
                 TotalCount = newTotalCount,
-                TransactionCount = currentStats.TransactionCount + 1,
-                MinPrice = Math.Min(currentStats.MinPrice, transaction.Silver),
-                MaxPrice = Math.Max(currentStats.MaxPrice, transaction.Silver),
+                TransactionCount = newTransactionCount,
+                MinPrice = Math.min(currentStats.MinPrice, transaction.Silver),
+                MaxPrice = Math.max(currentStats.MaxPrice, transaction.Silver),
                 TotalVolume = newTotalVolume,
-                AveragePrice = (double)newTotalVolume / newTotalCount,
+                AveragePrice = newAveragePrice,
                 FirstTransaction = transaction.CreatedAt < currentStats.FirstTransaction
                     ? transaction.CreatedAt
                     : currentStats.FirstTransaction,
                 LastTransaction = transaction.CreatedAt > currentStats.LastTransaction
                     ? transaction.CreatedAt
-                    : currentStats.LastTransaction
+                    : currentStats.LastTransaction,
+                MedianPrice = medianPrice,
+                StandardDeviation = standardDeviation,
+                TotalTransactionValue = newTotalVolume
             };
         }
 
