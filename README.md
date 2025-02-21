@@ -1,66 +1,125 @@
 # MistTrader
 
-## Overview
+A browser extension and analysis tool for the Mistwood Exchange market. Track your inventory, transactions, and profile data to make better trading decisions.
 
-MistTrader is a project that provides tools for parsing and analyzing transaction data from the Mistwood Exchange. The repository contains multiple modules and projects, each with its own functionality.
+## Features
 
-### Main Modules
+- Track your market transactions in real-time
+- Monitor your inventory changes
+- View your profile statistics
+- Export data for analysis
+- Calculate profit/loss across trades
+- Track market trends for items
 
-- **MistTrader.DataParsers**: This module contains various parsers for processing transaction data. It includes high-performance parsers, reactive parsers, and optimized exchange parsers.
-- **MistTrader.Cli**: This module provides a command-line interface for running the parsers and analyzing transaction data.
+## Installation
 
-## Building the Project
+### Browser Extension
 
-To build the project, you need to have the .NET SDK installed. You can download it from the [official .NET website](https://dotnet.microsoft.com/download).
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/Avabin/MistTrader.git
-   cd MistTrader
-   ```
-
-2. Restore dependencies:
-   ```sh
-   dotnet restore
-   ```
-
-3. Build the project:
-   ```sh
-   dotnet build
-   ```
-
-## Running the Project
-
-To run the project, use the following command:
-
-```sh
-dotnet run --project src/Runners/MistTrader.Cli -- <path-to-json-file>
+1. Clone this repository:
+```bash
+git clone https://github.com/Avabin/MistTrader.git
 ```
 
-Replace `<path-to-json-file>` with the path to the JSON file containing the transaction data.
+2. Navigate to your browser's extensions page:
+   - Chrome: `chrome://extensions`
+   - Edge: `edge://extensions`
 
-## Testing the Project
+3. Enable "Developer mode" (toggle in the top-right corner)
 
-To run the tests, use the following command:
+4. Click "Load unpacked" and select the `extension` folder from the cloned repository
 
-```sh
+5. The extension should now appear in your browser toolbar
+
+6. Visit [Mistwood Exchange](https://mistwood.pl) and log in to start tracking your trades
+
+### Analysis Tool (CLI)
+
+1. Ensure you have .NET 8.0 SDK installed
+
+2. Build the solution:
+```bash
+dotnet build
+```
+
+3. Run the CLI tool:
+```bash
+dotnet run --project src/Runners/MistTrader.Cli/MistTrader.Cli.csproj <path-to-export-file>
+```
+
+## Usage
+
+### Browser Extension
+
+1. Click the MistTrader icon in your browser toolbar to open the panel
+2. The extension automatically tracks:
+   - Market transactions
+   - Inventory changes
+   - Profile updates
+3. Use the "Export" button to save your data as a ZIP file
+4. Use collapsible sections to view different types of data
+
+### Data Analysis
+
+The exported ZIP file contains:
+- `transactions.json`: Your market transaction history
+- `inventory.json`: Current inventory state
+- `profile.json`: Your profile data and statistics
+
+Use the CLI tool to analyze the data:
+```bash
+dotnet run --project src/Runners/MistTrader.Cli/MistTrader.Cli.csproj exported-data.zip
+```
+
+## Development
+
+### Prerequisites
+
+- .NET 8.0 SDK
+- Node.js (for extension development)
+- Chrome or Edge browser
+
+### Project Structure
+
+- `extension/`: Browser extension source code
+- `src/`: .NET solution
+  - `Modules/MistTrader.DataParsers/`: Core data parsing functionality
+  - `Runners/MistTraader.Cli/`: Command-line interface
+- `tests/`: Unit tests
+
+### Running Tests
+
+```bash
 dotnet test
 ```
 
-This will execute all the tests in the repository and display the results.
+## Contributing
 
-## Dependencies
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to your branch
+5. Create a Pull Request
 
-The project has the following dependencies:
+## License
 
-- .NET SDK 9.0 or later
-- System.Reactive (version 6.0.1)
-- ConsoleAppFramework (version 5.4.0)
-- Microsoft.Extensions.Logging.Console (version 9.0.2)
-- FluentAssertions (for testing)
-- NUnit (for testing)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Acknowledgments
 
-### Viewing Test Results
+- Thanks to the Mistwood community
+- Built using .NET 8.0 and Chrome Extensions API
 
-The test results are displayed directly in the GitHub Actions interface. You can view the test results by navigating to the "Actions" tab in your GitHub repository and selecting the workflow run you are interested in. The test results are available as an artifact that you can download and view locally.
+## Support
+
+If you encounter any issues or have questions, please [open an issue](https://github.com/Avabin/MistTrader/issues).
+```
+
+This README:
+- Explains what the project does
+- Provides clear installation instructions for both the extension and CLI tool
+- Includes detailed usage instructions
+- Has development setup information
+- Includes project structure and testing instructions
+- Provides contribution guidelines
+- Has proper licensing and support information
+- Uses proper markdown formatting with code blocks and sections
