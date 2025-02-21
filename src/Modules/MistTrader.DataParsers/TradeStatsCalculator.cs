@@ -55,8 +55,8 @@ public static class TradeStatsCalculator
             {
                 TotalCount = newTotalCount,
                 TransactionCount = newTransactionCount,
-                MinPrice = Math.min(currentStats.MinPrice, transaction.Silver),
-                MaxPrice = Math.max(currentStats.MaxPrice, transaction.Silver),
+                MinPrice = Math.Min(currentStats.MinPrice, transaction.Silver),
+                MaxPrice = Math.Max(currentStats.MaxPrice, transaction.Silver),
                 TotalVolume = newTotalVolume,
                 AveragePrice = newAveragePrice,
                 FirstTransaction = transaction.CreatedAt < currentStats.FirstTransaction
@@ -107,5 +107,12 @@ public static class TradeStatsCalculator
         }
 
         return personalStats;
+    }
+
+    public static InventoryStatistics CalculateInventoryStats(IEnumerable<InventoryItem> inventoryItems)
+    {
+        var inventoryStatistics = new InventoryStatistics();
+        inventoryStatistics.Calculate(inventoryItems);
+        return inventoryStatistics;
     }
 }

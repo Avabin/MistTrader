@@ -315,6 +315,27 @@ public class TradeStatsCalculatorTests
         itemStats.TotalTransactionValue.Should().Be(600);
     }
 
+    [Test]
+    public void CalculateInventoryStats_ShouldCalculateCorrectStatistics()
+    {
+        // Arrange
+        var inventoryItems = new List<InventoryItem>
+        {
+            new InventoryItem { ItemId = "Item1", Count = 10, Level = 1, IsIdentified = true, SoulBound = false, Silver = 100 },
+            new InventoryItem { ItemId = "Item2", Count = 5, Level = 2, IsIdentified = true, SoulBound = false, Silver = 200 },
+            new InventoryItem { ItemId = "Item3", Count = 15, Level = 3, IsIdentified = true, SoulBound = false, Silver = 50 }
+        };
+
+        // Act
+        var inventoryStats = TradeStatsCalculator.CalculateInventoryStats(inventoryItems);
+
+        // Assert
+        inventoryStats.TotalValue.Should().Be(10 * 100 + 5 * 200 + 15 * 50); // 1000 + 1000 + 750 = 2750
+        inventoryStats.TotalCount.Should().Be(10 + 5 + 15); // 30
+        inventoryStats.ItemCount.Should().Be(3);
+        inventoryStats.AverageValue.Should().Be(2750 / 3.0); // 916.67
+    }
+
     private static Transaction CreateTransaction(
         int id,
         string itemId,
