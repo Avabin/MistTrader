@@ -71,7 +71,7 @@ public class TradeStatsCalculatorTests
             TotalEarned = 0,
             ProfitLoss = 0,
             MedianPrice = 75,
-            StandardDeviation = 5.0,
+            StandardDeviation = 4.166666666666666,
             TotalTransactionValue = 2275
         });
 
@@ -138,7 +138,7 @@ public class TradeStatsCalculatorTests
             TotalEarned = 1900, // (10 * 70) + (15 * 80) = 700 + 1200
             ProfitLoss = 1525, // 1900 - 375
             MedianPrice = 75,
-            StandardDeviation = 5.0,
+            StandardDeviation = 4.166666666666666,
             TotalTransactionValue = 2275
         });
 

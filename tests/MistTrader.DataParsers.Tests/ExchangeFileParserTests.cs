@@ -112,7 +112,10 @@ public class AsyncTradesParserTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 75,
+            StandardDeviation = 4.166666666666666,
+            TotalTransactionValue = 2275
         });
 
         var pandoraBoxStats = stats["PandoraBox"];
@@ -131,7 +134,10 @@ public class AsyncTradesParserTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 130000,
+            StandardDeviation = 0,
+            TotalTransactionValue = 130000
         });
     }
 

@@ -9,7 +9,8 @@ public static class TradeStatsCalculator
     {
         var stats = new Dictionary<string, TransactionStats>();
 
-        foreach (var transaction in transactions)
+        var transationsArray = transactions as Transaction[] ?? transactions.ToArray();
+        foreach (var transaction in transationsArray)
         {
             var itemId = transaction.SellOffer.ItemId;
 
@@ -43,7 +44,7 @@ public static class TradeStatsCalculator
             var newTransactionCount = currentStats.TransactionCount + 1;
             var newAveragePrice = (double)newTotalVolume / newTotalCount;
 
-            var prices = transactions.Where(t => t.SellOffer.ItemId == itemId).Select(t => t.Silver).OrderBy(p => p).ToList();
+            var prices = transationsArray.Where(t => t.SellOffer.ItemId == itemId).Select(t => t.Silver).OrderBy(p => p).ToList();
             var medianPrice = prices.Count % 2 == 0
                 ? (prices[prices.Count / 2 - 1] + prices[prices.Count / 2]) / 2.0
                 : prices[prices.Count / 2];
@@ -81,9 +82,10 @@ public static class TradeStatsCalculator
     {
         var personalStats = new Dictionary<string, TransactionStats>();
 
+        var transationsArray = transactions as Transaction[] ?? transactions.ToArray();
         foreach (var (itemId, marketStat) in marketStats)
         {
-            var itemTransactions = transactions.Where(t => t.SellOffer.ItemId == itemId).ToList();
+            var itemTransactions = transationsArray.Where(t => t.SellOffer.ItemId == itemId).ToList();
             var bought = itemTransactions
                 .Where(t => t.BuyOffer.BreederId == breederId)
                 .ToList();
