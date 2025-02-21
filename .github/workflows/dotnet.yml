@@ -1,13 +1,18 @@
 name: .NET
 
-permissions:
-  checks: write
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  statuses: write
+  checks: write
+  contents: write
+  pull-requests: write
+  actions: write
 
 jobs:
   build:
