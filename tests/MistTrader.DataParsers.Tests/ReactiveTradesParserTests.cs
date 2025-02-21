@@ -88,9 +88,10 @@ public class ReactiveTradesParserTests
             await writer.FlushAsync();
         }
         stream.Position = 0;
+        var breederId = 1000;
 
         // Act
-        var stats = await _parser.CalculateStatsReactive(stream).LastOrDefaultAsync();
+        var stats = await _parser.CalculateStatsReactive(stream, breederId);
 
         // Assert
         stats.Should().ContainKey("CrystalWater")
@@ -102,7 +103,7 @@ public class ReactiveTradesParserTests
             ItemId = "CrystalWater",
             TotalCount = 30, // 10 + 5 + 15
             TotalVolume = 70 * 10 + 75 * 5 + 80 * 15, // 700 + 375 + 1200 = 2275
-            AveragePrice = (70 * 10 + 75 * 5 + 80 * 15) / 30.0,
+            AveragePrice = 75.0,
             MinPrice = 70,
             MaxPrice = 80,
             TransactionCount = 3,
@@ -112,7 +113,10 @@ public class ReactiveTradesParserTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 75,
+            StandardDeviation = 16.666666666666668,
+            TotalTransactionValue = 2275
         });
 
         var pandoraBoxStats = stats["PandoraBox"];
@@ -131,7 +135,11 @@ public class ReactiveTradesParserTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 130000,
+            StandardDeviation = 0,
+            TotalTransactionValue = 130000
+            
         });
     }
 

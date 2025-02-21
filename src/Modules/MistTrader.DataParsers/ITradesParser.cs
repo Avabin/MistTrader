@@ -17,5 +17,5 @@ public interface IAsyncTradesParser
 public interface IReactiveTradesParser
 {
     IObservable<Transaction> ParseTransactionsReactive(Stream stream);
-    IObservable<Dictionary<string, TransactionStats>> CalculateStatsReactive(Stream stream);
+    IObservable<Dictionary<string, TransactionStats>> CalculateStatsReactive(Stream stream, long breederId);
 }

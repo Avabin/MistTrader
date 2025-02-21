@@ -14,7 +14,9 @@ public record TransactionStats
     public required double AveragePrice { get; init; }
     public required DateTime FirstTransaction { get; init; }
     public required DateTime LastTransaction { get; init; }
-    
+    public required double MedianPrice { get; init; }
+    public required double StandardDeviation { get; init; }
+    public required long TotalTransactionValue { get; init; }
     
     public required long TotalBought { get; init; }
     public required long TotalSpent { get; init; }
@@ -22,4 +24,3 @@ public record TransactionStats
     public required long TotalEarned { get; init; }
     public required long ProfitLoss { get; init; }
 }
-

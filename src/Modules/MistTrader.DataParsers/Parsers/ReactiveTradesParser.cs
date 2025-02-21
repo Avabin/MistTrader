@@ -12,84 +12,39 @@ public class ReactiveTradesParser : IReactiveTradesParser
         TypeInfoResolver = JsonContext.Default
     };
 
-    private const long MyBreederId = 6305; // We could get this from configuration later
-
-    public IObservable<Dictionary<string, TransactionStats>> CalculateStatsReactive(Stream stream)
+    public IObservable<Dictionary<string, TransactionStats>> CalculateStatsReactive(Stream stream, long breederId)
     {
-        return ParseTransactionsReactive(stream)
-            .Scan(
-                new Dictionary<string, TransactionStats>(),
-                (stats, transaction) =>
-                {
-                    var newStats = new Dictionary<string, TransactionStats>(stats);
-                    var itemId = transaction.SellOffer.ItemId;
+        var transactions = ParseTransactionsReactive(stream).ToList();
 
-                    // Check if I'm the buyer (my breederId in buyOffer) or seller (my breederId in sellOffer)
-                    var isBuying = transaction.BuyOffer.BreederId == MyBreederId;
-                    var isSelling = transaction.SellOffer.BreederId == MyBreederId;
 
-                    if (!newStats.TryGetValue(itemId, out var currentStats))
-                    {
-                        var totalBought = isBuying ? transaction.Count : 0;
-                        var totalSpent = isBuying ? transaction.Count * transaction.Silver : 0;
-                        var totalSold = isSelling ? transaction.Count : 0;
-                        var totalEarned = isSelling ? transaction.Count * transaction.Silver : 0;
+        return transactions.Select(list =>
+        {
+            var grouped = list.GroupBy(t => t.SellOffer.ItemId);
 
-                        currentStats = new TransactionStats
-                        {
-                            ItemId = itemId,
-                            FirstTransaction = transaction.CreatedAt,
-                            LastTransaction = transaction.CreatedAt,
-                            MinPrice = transaction.Silver,
-                            MaxPrice = transaction.Silver,
-                            TotalCount = transaction.Count,
-                            TotalVolume = transaction.Silver * transaction.Count,
-                            TransactionCount = 1,
-                            AveragePrice = transaction.Silver,
-                            TotalBought = totalBought,
-                            TotalSpent = totalSpent,
-                            TotalSold = totalSold,
-                            TotalEarned = totalEarned,
-                            ProfitLoss = totalEarned - totalSpent
-                        };
-                    }
-                    else
-                    {
-                        var totalBought = currentStats.TotalBought + (isBuying ? transaction.Count : 0);
-                        var totalSpent = currentStats.TotalSpent +
-                                         (isBuying ? transaction.Count * transaction.Silver : 0);
-                        var totalSold = currentStats.TotalSold + (isSelling ? transaction.Count : 0);
-                        var totalEarned = currentStats.TotalEarned +
-                                          (isSelling ? transaction.Count * transaction.Silver : 0);
-                        var newTotalCount = currentStats.TotalCount + transaction.Count;
-                        var newTotalVolume = currentStats.TotalVolume + (transaction.Silver * transaction.Count);
+            var stats = grouped.ToDictionary(g => g.Key, g => new TransactionStats
+            {
+                TotalCount = g.Sum(t => t.Count),
+                TotalTransactionValue = g.Sum(t => t.Count * t.SellOffer.Silver),
+                AveragePrice = g.Average(t => t.SellOffer.Silver),
+                MinPrice = g.Min(t => t.SellOffer.Silver),
+                MaxPrice = g.Max(t => t.SellOffer.Silver),
+                LastTransaction = g.Max(t => t.CreatedAt),
+                ItemId = g.Key,
+                TransactionCount = g.Count(),
+                TotalVolume = g.Sum(t => t.Count * t.SellOffer.Silver),
+                FirstTransaction = g.Min(t => t.CreatedAt),
+                MedianPrice = g.Select(t => t.SellOffer.Silver).OrderBy(p => p).ElementAt(g.Count() / 2),
+                StandardDeviation = g.Select(t => t.SellOffer.Silver)
+                    .Average(p => Math.Pow(p - g.Average(t => t.SellOffer.Silver), 2)),
+                TotalBought = 0,
+                TotalSpent = 0,
+                TotalSold = 0,
+                TotalEarned = 0,
+                ProfitLoss = 0,
+            });
 
-                        currentStats = currentStats with
-                        {
-                            TotalCount = newTotalCount,
-                            TotalVolume = newTotalVolume,
-                            AveragePrice = (double)newTotalVolume / newTotalCount,
-                            MinPrice = Math.Min(currentStats.MinPrice, transaction.Silver),
-                            MaxPrice = Math.Max(currentStats.MaxPrice, transaction.Silver),
-                            TransactionCount = currentStats.TransactionCount + 1,
-                            FirstTransaction = transaction.CreatedAt < currentStats.FirstTransaction
-                                ? transaction.CreatedAt
-                                : currentStats.FirstTransaction,
-                            LastTransaction = transaction.CreatedAt > currentStats.LastTransaction
-                                ? transaction.CreatedAt
-                                : currentStats.LastTransaction,
-                            TotalBought = totalBought,
-                            TotalSpent = totalSpent,
-                            TotalSold = totalSold,
-                            TotalEarned = totalEarned,
-                            ProfitLoss = totalEarned - totalSpent
-                        };
-                    }
-
-                    newStats[itemId] = currentStats;
-                    return newStats;
-                }
-            );
+            return stats;
+        }).Take(1);
     }
 
     public IObservable<Transaction> ParseTransactionsReactive(Stream stream)

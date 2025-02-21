@@ -69,7 +69,10 @@ public class TradeStatsCalculatorTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 75,
+            StandardDeviation = 4.166666666666666,
+            TotalTransactionValue = 2275
         });
 
         var pandoraBoxStats = stats["PandoraBox"];
@@ -88,7 +91,10 @@ public class TradeStatsCalculatorTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 130000,
+            StandardDeviation = 0,
+            TotalTransactionValue = 130000
         });
     }
 
@@ -130,7 +136,10 @@ public class TradeStatsCalculatorTests
             TotalSpent = 375, // 5 * 75
             TotalSold = 25, // Two transactions where we are seller (first and fourth: 10 + 15)
             TotalEarned = 1900, // (10 * 70) + (15 * 80) = 700 + 1200
-            ProfitLoss = 1525 // 1900 - 375
+            ProfitLoss = 1525, // 1900 - 375
+            MedianPrice = 75,
+            StandardDeviation = 4.166666666666666,
+            TotalTransactionValue = 2275
         });
 
         var pandoraBoxStats = personalStats["PandoraBox"];
@@ -149,7 +158,10 @@ public class TradeStatsCalculatorTests
             TotalSpent = 0,
             TotalSold = 0,
             TotalEarned = 0,
-            ProfitLoss = 0
+            ProfitLoss = 0,
+            MedianPrice = 130000,
+            StandardDeviation = 0,
+            TotalTransactionValue = 130000
         });
     }
 
@@ -211,6 +223,117 @@ public class TradeStatsCalculatorTests
         itemStats.TotalSold.Should().Be(0);
         itemStats.TotalEarned.Should().Be(0);
         itemStats.ProfitLoss.Should().Be(0);
+    }
+
+    [Test]
+    public async Task CalculateStats_ShouldCalculateMedianPrice()
+    {
+        // Arrange
+        var transactions = new[]
+        {
+            CreateTransaction(1, "TestItem", 1001, 1002, "Sell", 100, 100, 1, "2025-02-17T20:00:00Z"),
+            CreateTransaction(2, "TestItem", 1003, 1004, "Sell", 200, 200, 1, "2025-02-17T20:10:00Z"),
+            CreateTransaction(3, "TestItem", 1005, 1006, "Sell", 300, 300, 1, "2025-02-17T20:20:00Z")
+        };
+        var json = JsonSerializer.Serialize(transactions);
+
+        using var stream = new MemoryStream();
+        await using (var writer = new StreamWriter(stream, leaveOpen: true))
+        {
+            await writer.WriteAsync(json);
+            await writer.FlushAsync();
+        }
+
+        stream.Position = 0;
+
+        // Act
+        var parsedTransactions = await _parser.ParseTransactionsStreamAsync(stream);
+        var stats = TradeStatsCalculator.CalculateStats(parsedTransactions);
+
+        // Assert
+        var itemStats = stats["TestItem"];
+        itemStats.MedianPrice.Should().Be(200);
+    }
+
+    [Test]
+    public async Task CalculateStats_ShouldCalculateStandardDeviation()
+    {
+        // Arrange
+        var transactions = new[]
+        {
+            CreateTransaction(1, "TestItem", 1001, 1002, "Sell", 100, 100, 1, "2025-02-17T20:00:00Z"),
+            CreateTransaction(2, "TestItem", 1003, 1004, "Sell", 200, 200, 1, "2025-02-17T20:10:00Z"),
+            CreateTransaction(3, "TestItem", 1005, 1006, "Sell", 300, 300, 1, "2025-02-17T20:20:00Z")
+        };
+        var json = JsonSerializer.Serialize(transactions);
+
+        using var stream = new MemoryStream();
+        await using (var writer = new StreamWriter(stream, leaveOpen: true))
+        {
+            await writer.WriteAsync(json);
+            await writer.FlushAsync();
+        }
+
+        stream.Position = 0;
+
+        // Act
+        var parsedTransactions = await _parser.ParseTransactionsStreamAsync(stream);
+        var stats = TradeStatsCalculator.CalculateStats(parsedTransactions);
+
+        // Assert
+        var itemStats = stats["TestItem"];
+        itemStats.StandardDeviation.Should().BeApproximately(81.65, 0.01);
+    }
+
+    [Test]
+    public async Task CalculateStats_ShouldCalculateTotalTransactionValue()
+    {
+        // Arrange
+        var transactions = new[]
+        {
+            CreateTransaction(1, "TestItem", 1001, 1002, "Sell", 100, 100, 1, "2025-02-17T20:00:00Z"),
+            CreateTransaction(2, "TestItem", 1003, 1004, "Sell", 200, 200, 1, "2025-02-17T20:10:00Z"),
+            CreateTransaction(3, "TestItem", 1005, 1006, "Sell", 300, 300, 1, "2025-02-17T20:20:00Z")
+        };
+        var json = JsonSerializer.Serialize(transactions);
+
+        using var stream = new MemoryStream();
+        await using (var writer = new StreamWriter(stream, leaveOpen: true))
+        {
+            await writer.WriteAsync(json);
+            await writer.FlushAsync();
+        }
+
+        stream.Position = 0;
+
+        // Act
+        var parsedTransactions = await _parser.ParseTransactionsStreamAsync(stream);
+        var stats = TradeStatsCalculator.CalculateStats(parsedTransactions);
+
+        // Assert
+        var itemStats = stats["TestItem"];
+        itemStats.TotalTransactionValue.Should().Be(600);
+    }
+
+    [Test]
+    public void CalculateInventoryStats_ShouldCalculateCorrectStatistics()
+    {
+        // Arrange
+        var inventoryItems = new List<InventoryItem>
+        {
+            new InventoryItem { ItemId = "Item1", Count = 10, Level = 1, IsIdentified = true, SoulBound = false, Silver = 100 },
+            new InventoryItem { ItemId = "Item2", Count = 5, Level = 2, IsIdentified = true, SoulBound = false, Silver = 200 },
+            new InventoryItem { ItemId = "Item3", Count = 15, Level = 3, IsIdentified = true, SoulBound = false, Silver = 50 }
+        };
+
+        // Act
+        var inventoryStats = TradeStatsCalculator.CalculateInventoryStats(inventoryItems);
+
+        // Assert
+        inventoryStats.TotalValue.Should().Be(10 * 100 + 5 * 200 + 15 * 50); // 1000 + 1000 + 750 = 2750
+        inventoryStats.TotalCount.Should().Be(10 + 5 + 15); // 30
+        inventoryStats.ItemCount.Should().Be(3);
+        inventoryStats.AverageValue.Should().Be(2750 / 3.0); // 916.67
     }
 
     private static Transaction CreateTransaction(

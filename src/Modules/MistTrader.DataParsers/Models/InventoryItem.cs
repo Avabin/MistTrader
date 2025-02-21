@@ -22,4 +22,10 @@ public record InventoryItem
     
     [JsonPropertyName("silver")]
     public required long Silver { get; init; }
+    
+    [JsonPropertyName("totalValue")]
+    public long TotalValue => Silver * Count;
+    
+    [JsonPropertyName("averageValue")]
+    public double AverageValue => Count > 0 ? (double)TotalValue / Count : 0;
 }

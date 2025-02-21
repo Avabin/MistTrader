@@ -131,7 +131,7 @@ public class ExchangeParserBenchmarks
     public async Task ParseReactiveWithStats()
     {
         using var stream = CreateJsonStream();
-        await _reactiveParser.CalculateStatsReactive(stream)
+        await _reactiveParser.CalculateStatsReactive(stream, 0)
             .LastOrDefaultAsync();
     }
 
