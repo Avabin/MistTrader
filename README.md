@@ -34,7 +34,7 @@ git clone https://github.com/Avabin/MistTrader.git
 
 ### Analysis Tool (CLI)
 
-1. Ensure you have .NET 8.0 SDK installed
+1. Ensure you have .NET 9.0 SDK installed
 
 2. Build the solution:
 ```bash
