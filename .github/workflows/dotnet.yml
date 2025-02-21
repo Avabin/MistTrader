@@ -28,17 +28,17 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=TestResults/test_results.trx"
+      run: dotnet test --no-build --verbosity normal
 
     - name: Publish test results
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: TestResults
+        path: tests/MistTrader.DataParsers.Tests/TestResults/net9.0/MistTrader.DataParsers.Tests.trx
 
     - name: Test Reporter
       uses: dorny/test-reporter@v1
       with:
         name: test-results
-        path: TestResults/test_results.trx
+        path: tests/MistTrader.DataParsers.Tests/TestResults/net9.0/MistTrader.DataParsers.Tests.trx
         reporter: dotnet-trx
