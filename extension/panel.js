@@ -1,6 +1,7 @@
 ﻿let transactions = [];
 let logs = [];
 let inventory = {};
+let profile = null;
 
 function updateLogDisplay() {
     const logContainer = document.getElementById('logContainer');
@@ -35,7 +36,33 @@ function updateDisplay() {
     if (inventoryElement) {
         inventoryElement.textContent = JSON.stringify(inventory, null, 2);
     }
+
+    const profileElement = document.getElementById('profile');
+    if (profileElement) {
+        if (profile) {
+            const formattedProfile = {
+                ...profile,
+                createdAt: profile.createdAt ? new Date(profile.createdAt).toLocaleString() : null,
+                lastHieroglyphChangePriceResetAt: profile.lastHieroglyphChangePriceResetAt ?
+                    new Date(profile.lastHieroglyphChangePriceResetAt).toLocaleString() : null,
+                lastRemainingBattlesResetAt: profile.lastRemainingBattlesResetAt ?
+                    new Date(profile.lastRemainingBattlesResetAt).toLocaleString() : null,
+                lastRemainingFeedXpGainsResetAt: profile.lastRemainingFeedXpGainsResetAt ?
+                    new Date(profile.lastRemainingFeedXpGainsResetAt).toLocaleString() : null
+            };
+            profileElement.textContent = JSON.stringify(formattedProfile, null, 2);
+
+            // Update profile name in header if available
+            const profileHeader = document.getElementById('profileHeader');
+            if (profileHeader) {
+                profileHeader.textContent = `Profile - ${profile.name} (Level ${profile.level})`;
+            }
+        } else {
+            profileElement.textContent = 'No profile data available';
+        }
+    }
 }
+
 function addLog(message, type = 'info') {
     const timestamp = new Date().toISOString().replace('T', ' ').substr(0, 19);
     logs.push({message, type, timestamp});
@@ -43,6 +70,59 @@ function addLog(message, type = 'info') {
         logs.shift(); // Keep last 1000 logs
     }
     updateLogDisplay();
+}
+
+function extractProfile(jsonObjects) {
+    try {
+        addLog(`Processing profile response data`, 'info');
+
+        // Recursively search for an object with the unique profile properties
+        function findProfileInObject(obj) {
+            if (!obj || typeof obj !== 'object') return null;
+
+            // Check if current object is the profile by looking for unique combinations
+            // of properties that only appear in the profile
+            if (obj.totalXp !== undefined &&
+                obj.remainingBattles !== undefined &&
+                obj.level !== undefined &&
+                obj.silver !== undefined) {
+                return obj;
+            }
+
+            // Search in arrays
+            if (Array.isArray(obj)) {
+                for (const item of obj) {
+                    const result = findProfileInObject(item);
+                    if (result) return result;
+                }
+            }
+
+            // Search in object properties
+            for (const key in obj) {
+                if (obj[key] && typeof obj[key] === 'object') {
+                    const result = findProfileInObject(obj[key]);
+                    if (result) return result;
+                }
+            }
+
+            return null;
+        }
+
+        // Search through each JSON object
+        for (const obj of jsonObjects) {
+            const profile = findProfileInObject(obj);
+            if (profile) {
+                addLog(`Found profile data for user: ${profile.name}`, 'success');
+                return profile;
+            }
+        }
+
+        addLog('No valid profile data found in response', 'warning');
+    } catch (error) {
+        addLog(`Error parsing profile response: ${error.message}`, 'error');
+        console.error('Full error:', error);
+    }
+    return null;
 }
 
 // Extract inventory from response
@@ -108,6 +188,7 @@ async function exportData() {
         // Add metadata file
         const metadata = {
             exportDate: new Date().toISOString(),
+            profileName: profile?.name || 'Unknown',
             transactionCount: transactions.length,
             inventoryItemCount: Array.isArray(inventory) ? inventory.length : Object.keys(inventory).length
         };
@@ -123,6 +204,11 @@ async function exportData() {
         if (Object.keys(inventory).length > 0) {
             zip.file('inventory.json', JSON.stringify(inventory, null, 2));
             addLog(`Added inventory data to export`, 'info');
+        }
+
+        if (profile) {
+            zip.file('profile.json', JSON.stringify(profile, null, 2));
+            addLog('Added profile data to export', 'info');
         }
 
         // Generate the ZIP file
@@ -228,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for custom transaction events
 // Update the transaction event listener
-    window.addEventListener('newTransactionData', function(event) {
+    window.addEventListener('newTransactionData', function (event) {
         if (event.detail && event.detail.data) {
             addLog(`Received new transaction data`, 'info');
 
@@ -274,13 +360,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add profile event listener
+    window.addEventListener('newProfileData', function(event) {
+        if (event.detail && event.detail.data) {
+            addLog('Received new profile data', 'info');
+            try {
+                const jsonObjects = parseMultipleJsonObjects(event.detail.data);
+                const newProfile = extractProfile(jsonObjects);
+
+                if (newProfile) {
+                    profile = newProfile;
+                    addLog(`Updated profile data for user: ${newProfile.name}`, 'success');
+                    updateDisplay();
+                } else {
+                    addLog('No valid profile data found in parsed response', 'warning');
+                }
+            } catch (error) {
+                addLog(`Failed to process profile data: ${error.message}`, 'error');
+                console.error('Profile processing error:', error);
+            }
+        }
+    });
+
     // Initial display update
     updateDisplay();
 });
 
 // Handle messages from background script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'NEW_TRANSACTION') {
+    if (message.type === 'PROFILE_UPDATE') {
+        profile = message.profile;
+        addLog('New profile received from background script', 'info');
+        updateDisplay();
+    } else if (message.type === 'NEW_TRANSACTION') {
         transactions.push(message.transaction);
         addLog('New transaction received from background script', 'info');
         updateDisplay();

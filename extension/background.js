@@ -1,6 +1,64 @@
 ﻿let transactions = [];
 let inventory = [];
+let profile = null;  // Add profile state
 let debuggeeId = null;
+
+
+// Add profile extraction function
+function extractProfile(response) {
+    try {
+        if (typeof response === 'string') {
+            // Split the response by '}' and process each part
+            const parts = response.split('}{').map((part, index) => {
+                if (index > 0) part = '{' + part;
+                if (index < response.split('}{').length - 1) part = part + '}';
+                return JSON.parse(part);
+            });
+
+            // Recursively search for an object with the unique profile properties
+            function findProfileInObject(obj) {
+                if (!obj || typeof obj !== 'object') return null;
+
+                // Check if current object is the profile
+                if (obj.totalXp !== undefined &&
+                    obj.remainingBattles !== undefined &&
+                    obj.level !== undefined &&
+                    obj.silver !== undefined) {
+                    return obj;
+                }
+
+                // Search in arrays
+                if (Array.isArray(obj)) {
+                    for (const item of obj) {
+                        const result = findProfileInObject(item);
+                        if (result) return result;
+                    }
+                }
+
+                // Search in object properties
+                for (const key in obj) {
+                    if (obj[key] && typeof obj[key] === 'object') {
+                        const result = findProfileInObject(obj[key]);
+                        if (result) return result;
+                    }
+                }
+
+                return null;
+            }
+
+            // Search through each part
+            for (const part of parts) {
+                const profile = findProfileInObject(part);
+                if (profile) {
+                    return profile;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error parsing profile response:', error);
+    }
+    return null;
+}
 
 // Function to extract transactions from response
 function extractTransactions(response) {
@@ -71,7 +129,26 @@ chrome.runtime.onConnect.addListener(function(port) {
 chrome.debugger.onEvent.addListener((source, method, params) => {
     if (method === 'Network.responseReceived') {
         const { requestId, response } = params;
-        if (response.url.includes('mistwood.pl/api/trpc/exchange.transactionHistory')) {
+        if (response.url.includes('mistwood.pl/api/trpc/breeders.me')) {
+            chrome.debugger.sendCommand(
+                source,
+                'Network.getResponseBody',
+                { requestId },
+                function(response) {
+                    if (response && response.body) {
+                        const newProfile = extractProfile(response.body);
+                        if (newProfile) {
+                            profile = newProfile;
+                            // Send to any listening DevTools panels
+                            chrome.runtime.sendMessage({
+                                type: 'newProfileData',
+                                profile: newProfile
+                            });
+                        }
+                    }
+                }
+            );
+        } else if (response.url.includes('mistwood.pl/api/trpc/exchange.transactionHistory')) {
             chrome.debugger.sendCommand(
                 source,
                 'Network.getResponseBody',
@@ -130,6 +207,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true });
     } else if (message.type === 'GET_INVENTORY') {
         sendResponse(inventory);
+    } else if (message.type === 'GET_PROFILE') {
+        sendResponse(profile);
+    } else if (message.type === 'CLEAR_ALL') {
+        transactions = [];
+        inventory = [];
+        profile = null;
+        sendResponse({ success: true });
     }
     return true;
 });

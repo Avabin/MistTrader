@@ -1,4 +1,6 @@
-﻿// Create the DevTools panel
+﻿let panelWindow = null;
+
+// Create the DevTools panel
 chrome.devtools.panels.create(
     "Mistwood Exchange",
     null,
@@ -19,6 +21,7 @@ chrome.devtools.panels.create(
         });
 
         panel.onHidden.addListener(function() {
+            console.log("[Mistwood Extension] Panel hidden, clearing window reference");
             panelWindow = null;
         });
     }
@@ -28,7 +31,32 @@ chrome.devtools.panels.create(
 chrome.devtools.network.onRequestFinished.addListener(
     async (request) => {
         try {
-            if (request.request.url.includes('mistwood.pl/api/trpc/exchange.transactionHistory')) {
+            if (request.request.url.includes('mistwood.pl/api/trpc/breeders.me')) {
+                console.log('[Mistwood Extension] Captured breeders.me request:', request.request.url);
+
+                // Get the response body
+                request.getContent((content, encoding) => {
+                    if (content) {
+                        console.log('[Mistwood Extension] Got breeders.me response content');
+                        // Create a custom event to send to the panel
+                        const event = new CustomEvent('newProfileData', {
+                            detail: {
+                                type: 'PROFILE_UPDATE',
+                                data: content,
+                                timestamp: new Date().toISOString(),
+                                url: request.request.url
+                            }
+                        });
+
+                        // Send to panel window if available
+                        if (panelWindow) {
+                            panelWindow.dispatchEvent(event);
+                        } else {
+                            console.log('[Mistwood Extension] Panel window not available');
+                        }
+                    }
+                });
+            } else if (request.request.url.includes('mistwood.pl/api/trpc/exchange.transactionHistory')) {
                 console.log('[Mistwood Extension] Captured exchange history request:', request.request.url);
 
                 // Get the response body
