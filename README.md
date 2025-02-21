@@ -50,7 +50,7 @@ dotnet run --project src/Runners/MistTrader.Cli/MistTrader.Cli.csproj <path-to-e
 
 ### Browser Extension
 
-1. Click the MistTrader icon in your browser toolbar to open the panel
+1. Press F12 and click the `Mistwood Exchange` tab browser developer tools.
 2. The extension automatically tracks:
    - Market transactions
    - Inventory changes
@@ -74,7 +74,7 @@ dotnet run --project src/Runners/MistTrader.Cli/MistTrader.Cli.csproj exported-d
 
 ### Prerequisites
 
-- .NET 8.0 SDK
+- .NET 9.0 SDK
 - Node.js (for extension development)
 - Chrome or Edge browser
 
@@ -112,14 +112,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 If you encounter any issues or have questions, please [open an issue](https://github.com/Avabin/MistTrader/issues).
-```
-
-This README:
-- Explains what the project does
-- Provides clear installation instructions for both the extension and CLI tool
-- Includes detailed usage instructions
-- Has development setup information
-- Includes project structure and testing instructions
-- Provides contribution guidelines
-- Has proper licensing and support information
-- Uses proper markdown formatting with code blocks and sections
