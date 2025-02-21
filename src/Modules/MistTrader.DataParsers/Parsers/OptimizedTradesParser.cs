@@ -111,16 +111,16 @@ public class OptimizedTradesParser
         try
         {
 #if NET7_0_OR_GREATER
-            transaction = JsonSerializer.Deserialize<Transaction>(json, Options);
+            transaction = JsonSerializer.Deserialize<Transaction>(json, Options)!;
 #else
             // For older .NET versions, we need to convert to string
-            transaction = JsonSerializer.Deserialize<Transaction>(json.ToString(), Options);
+            transaction = JsonSerializer.Deserialize<Transaction>(json.ToString(), Options)!;
 #endif
             return true;
         }
         catch
         {
-            transaction = default;
+            transaction = default!;
             return false;
         }
     }

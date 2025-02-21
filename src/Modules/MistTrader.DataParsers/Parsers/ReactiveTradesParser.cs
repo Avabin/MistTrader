@@ -50,7 +50,8 @@ public class ReactiveTradesParser : IReactiveTradesParser
                             TotalSpent = totalSpent,
                             TotalSold = totalSold,
                             TotalEarned = totalEarned,
-                            ProfitLoss = totalEarned - totalSpent
+                            ProfitLoss = totalEarned - totalSpent,
+                            TotalTransactionValue = transaction.Silver * transaction.Count
                         };
                     }
                     else
@@ -82,7 +83,8 @@ public class ReactiveTradesParser : IReactiveTradesParser
                             TotalSpent = totalSpent,
                             TotalSold = totalSold,
                             TotalEarned = totalEarned,
-                            ProfitLoss = totalEarned - totalSpent
+                            ProfitLoss = totalEarned - totalSpent,
+                            TotalTransactionValue = newTotalVolume
                         };
                     }
 
