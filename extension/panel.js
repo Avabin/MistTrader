@@ -36,6 +36,10 @@ function updateDisplay() {
     if (inventoryElement) {
         inventoryElement.textContent = JSON.stringify(inventory, null, 2);
     }
+    const inventoryCount = document.getElementById('inventoryCount');
+    if (inventoryCount) {
+        inventoryCount.textContent = `Inventory: ${Object.keys(inventory).length} items`;
+    }
 
     const profileElement = document.getElementById('profile');
     if (profileElement) {
@@ -60,6 +64,10 @@ function updateDisplay() {
         } else {
             profileElement.textContent = 'No profile data available';
         }
+    }
+    const breederId = document.getElementById('breederId');
+    if (breederId) {
+        breederId.textContent = `Breeder ID: ${profile?.id || 'Unknown'}`;
     }
 }
 

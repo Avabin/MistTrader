@@ -1,8 +1,8 @@
 ﻿{
   "manifest_version": 3,
-  "name": "Mistwood Exchange History Tracker",
+  "name": "Mistwood Market History Tracker",
   "version": "1.0.1",
-  "description": "Captures and stores transaction history and inventory data from Mistwood Exchange",
+  "description": "Captures and stores transaction history and inventory data from Mistwood market",
   "permissions": [
     "storage",
     "downloads",
