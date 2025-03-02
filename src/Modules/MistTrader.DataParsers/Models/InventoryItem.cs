@@ -28,4 +28,17 @@ public record InventoryItem
     
     [JsonPropertyName("averageValue")]
     public double AverageValue => Count > 0 ? (double)TotalValue / Count : 0;
+    
+    [JsonIgnore]
+    public static InventoryItem Empty => new InventoryItem
+    {
+        ItemId = string.Empty,
+        Count = 0,
+        Level = 0,
+        IsIdentified = false,
+        SoulBound = false,
+        Silver = 0
+    };
+    
+    public static bool IsEmpty(InventoryItem item) => item.Equals(Empty);
 }

@@ -2,29 +2,29 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using MistTrader.UI.ViewModels;
+using ReactiveUI;
 
 namespace MistTrader.UI;
 
 public class ViewLocator : IDataTemplate
 {
-    public Control? Build(object? param)
+    public Control? Build(object? viewModel)
     {
-        if (param is null)
+        if (viewModel is null)
             return null;
 
-        var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-        var type = Type.GetType(name);
-
-        if (type != null)
+        // to get registered view, we need to construct `IViewFor<T>` where T is the view model type
+        var viewModelType = viewModel.GetType();
+        var viewType = typeof(IViewFor<>).MakeGenericType(viewModelType);
+        var view = App.ServiceProvider.GetService(viewType);
+        if (view is Control control)
         {
-            return (Control)Activator.CreateInstance(type)!;
+            return control;
         }
 
-        return new TextBlock { Text = "Not Found: " + name };
+        return new TextBlock
+            { Text = "View registered in DI container for view model: " + viewModelType.Name };
     }
 
-    public bool Match(object? data)
-    {
-        return data is ViewModelBase;
-    }
+    public bool Match(object? data) => data is IViewModel;
 }

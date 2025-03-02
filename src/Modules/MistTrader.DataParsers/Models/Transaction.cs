@@ -25,4 +25,18 @@ public record Transaction
     
     [JsonPropertyName("silver")]
     public required long Silver { get; init; }
+    
+    [JsonIgnore]
+    public static Transaction Empty => new Transaction
+    {
+        Id = 0,
+        Maker = string.Empty,
+        SellOffer = BreederOffer.Empty,
+        BuyOffer = BreederOffer.Empty,
+        Count = 0,
+        CreatedAt = DateTime.MinValue,
+        Silver = 0
+    };
+
+    public static bool IsEmpty(Transaction transaction) => transaction.Equals(Empty);
 }
