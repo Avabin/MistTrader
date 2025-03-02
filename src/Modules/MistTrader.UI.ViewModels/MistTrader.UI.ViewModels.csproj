@@ -8,7 +8,19 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="8.2.0" />
+      <PackageReference Include="Avabin.Commons.ReactiveCommandGenerator" Version="1.0.4" />
+      <PackageReference Include="Avabin.Commons.ReactiveCommandGenerator.Core" Version="1.0.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
       <PackageReference Include="ReactiveUI" Version="20.1.1" />
+      <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MistTrader.Proxy\MistTrader.Proxy.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Proxy\" />
     </ItemGroup>
 
 </Project>

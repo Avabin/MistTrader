@@ -12,10 +12,11 @@ internal class MistwoodProxyEventPublisher(IMistwoodProxy proxy, IMediator media
     private readonly IMediator _mediator = mediator;
     private readonly ILogger<MistwoodProxyEventPublisher> _logger = logger;
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting proxy event publisher");
         _proxy.ResponseInterceptedAsync += OnProxyResponseInterceptedAsync;
+        return Task.CompletedTask;
     }
 
     private async Task OnProxyResponseInterceptedAsync(MistwoodResponseEventArgs e)
@@ -25,9 +26,10 @@ internal class MistwoodProxyEventPublisher(IMistwoodProxy proxy, IMediator media
     }
 
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Stopping proxy event publisher");
         _proxy.ResponseInterceptedAsync -= OnProxyResponseInterceptedAsync;
+        return Task.CompletedTask;
     }
 }

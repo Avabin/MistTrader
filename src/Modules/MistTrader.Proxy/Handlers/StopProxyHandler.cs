@@ -5,7 +5,7 @@ using MistTrader.Proxy.Services;
 
 namespace MistTrader.Proxy.Handlers;
 
-internal class StopProxyHandler(IMistwoodProxy proxy, IMediator mediator) : IRequestHandler<StopProxy>
+internal sealed class StopProxyHandler(IMistwoodProxy proxy, IMediator mediator) : IRequestHandler<StopProxy>
 {
     private readonly IMistwoodProxy _proxy = proxy;
     private readonly IMediator _mediator = mediator;

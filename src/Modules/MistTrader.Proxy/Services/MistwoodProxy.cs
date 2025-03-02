@@ -163,9 +163,9 @@ internal sealed class MistwoodProxy : IMistwoodProxy, IAsyncDisposable
         ObjectDisposedException.ThrowIf(_disposed, nameof(MistwoodProxy));
     }
         
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        if (_disposed) return;
+        if (_disposed) return ValueTask.CompletedTask;
         
         if (IsRunning)
         {
@@ -178,5 +178,6 @@ internal sealed class MistwoodProxy : IMistwoodProxy, IAsyncDisposable
             
         _proxyServer.Dispose();
         _disposed = true;
+        return ValueTask.CompletedTask;
     }
 }

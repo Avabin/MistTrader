@@ -16,7 +16,8 @@ public class ViewLocator : IDataTemplate
         // to get registered view, we need to construct `IViewFor<T>` where T is the view model type
         var viewModelType = viewModel.GetType();
         var viewType = typeof(IViewFor<>).MakeGenericType(viewModelType);
-        var view = App.ServiceProvider.GetService(viewType);
+        if (App.ServiceProvider is not { } provider) throw new InvalidOperationException("Service provider is not set");
+        var view = provider.GetService(viewType);
         if (view is Control control)
         {
             return control;

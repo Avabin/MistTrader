@@ -8,8 +8,9 @@ internal class ResponseCapturedHandler(ILogger<ResponseCapturedHandler> logger) 
 {
     private readonly ILogger<ResponseCapturedHandler> _logger = logger;
 
-    public async Task Handle(ResponseCaptured notification, CancellationToken cancellationToken)
+    public Task Handle(ResponseCaptured notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Captured response from {Url}", notification.Url);
+        return Task.CompletedTask;
     }
 }

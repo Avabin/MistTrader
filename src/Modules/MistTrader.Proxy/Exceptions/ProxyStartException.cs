@@ -1,9 +1,5 @@
 namespace MistTrader.Proxy.Exceptions;
 
-public class ProxyStartException : Exception
+public class ProxyStartException(string message, Exception? innerException = null) : Exception(message, innerException)
 {
-    public ProxyStartException(string message, Exception? innerException = null) 
-        : base(message, innerException)
-    {
-    }
 }

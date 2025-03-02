@@ -6,6 +6,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using MistTrader.UI.ViewModels;
 using ReactiveUI;
 using Splat;
 using Splat.Autofac;
@@ -21,7 +22,7 @@ class Program
         
         // Configure Autofac
         builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-        builder.ConfigureContainer<ContainerBuilder>(static (HostBuilderContext context, ContainerBuilder containerBuilder) =>
+        builder.ConfigureContainer(static (HostBuilderContext context, ContainerBuilder containerBuilder) =>
         {
             // Create and configure AutofacDependencyResolver using the extension method
             var resolver = containerBuilder.UseAutofacDependencyResolver();
@@ -48,6 +49,8 @@ class Program
             containerBuilder.RegisterModule<AutofacModule>();
         });
 
+        builder.ConfigureServices(ConfigureAppServices);
+
         var appBuilder = BuildAvaloniaApp();
         var host = builder.Build();
         host.Start();
@@ -66,7 +69,12 @@ class Program
             return 1;
         }
     }
-    
+
+    private static void ConfigureAppServices(HostBuilderContext ctx, IServiceCollection services)
+    {
+        services.AddViewModelsDependencies(ctx.Configuration);
+    }
+
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
