@@ -10,7 +10,7 @@ namespace MistTrader.UI;
 
 public partial class App : Application
 {
-    public static IServiceProvider ServiceProvider { get; internal set; }
+    public static IServiceProvider? ServiceProvider { get; internal set; } = null;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -20,6 +20,8 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            if (ServiceProvider is null)
+                throw new InvalidOperationException("Service provider is not set");
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             desktop.MainWindow = mainWindow;
         }

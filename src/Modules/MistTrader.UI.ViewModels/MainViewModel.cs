@@ -1,6 +1,23 @@
+using System.Reactive;
+using System.Reactive.Linq;
+using Commons.ReactiveCommandGenerator.Core;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
 namespace MistTrader.UI.ViewModels;
 
-public class MainViewModel : ViewModel
+public partial class MainViewModel : ViewModel
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [Reactive]
+    public string Greeting { get; set; } = "";
+    
+    [ReactiveCommand(canExecuteMethodName: nameof(CanSayHello))]
+    private void SayHello()
+    {
+        Greeting = "Hello, Avalonia!";
+        
+    }
+    
+    // CanExecute command must return IObservable<bool>
+    private IObservable<bool> CanSayHello() => Observable.Return(Greeting == "");
 }
