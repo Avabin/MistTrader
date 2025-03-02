@@ -1,6 +1,8 @@
 using System.Net;
+using MediatR;
 using MistTrader.Proxy.Exceptions;
 using MistTrader.Proxy.Models;
+using MistTrader.Proxy.Notifications;
 using Titanium.Web.Proxy;
 using Titanium.Web.Proxy.EventArguments;
 using Titanium.Web.Proxy.Models;
@@ -23,16 +25,39 @@ internal sealed class MistwoodProxy : IMistwoodProxy, IAsyncDisposable
     public event Func<MistwoodRequestEventArgs, Task>? RequestInterceptedAsync;
     public event Func<MistwoodResponseEventArgs, Task>? ResponseInterceptedAsync;
 
+    private Lazy<bool> _certificateLazy;
+
     public MistwoodProxy()
     {
         _proxyServer = new ProxyServer();
             
         _proxyServer.BeforeRequest += OnRequestAsync;
         _proxyServer.BeforeResponse += OnResponseAsync;
-            
-        // Certificate generation
-        _proxyServer.CertificateManager.CreateRootCertificate();
-        _proxyServer.CertificateManager.TrustRootCertificate();
+
+        _certificateLazy = new Lazy<bool>(() =>
+        {
+            // Certificate generation
+            try
+            {
+                var isRootCertificateUserTrusted = _proxyServer.CertificateManager.IsRootCertificateUserTrusted();
+                if (isRootCertificateUserTrusted)
+                {
+                    return true;
+                }
+            }
+            catch (Exception e) when (e.Message.Equals("Root certificate is null.", StringComparison.OrdinalIgnoreCase))
+            {
+                var success = _proxyServer.CertificateManager.CreateRootCertificate();
+                if (!success)
+                {
+                    throw new ProxyStartException("Failed to generate root certificate");
+                }
+            }
+
+            _proxyServer.CertificateManager.TrustRootCertificate();
+
+            return _proxyServer.CertificateManager.IsRootCertificateUserTrusted();
+        });
     }
 
     public async Task StartAsync(int port = 8000, CancellationToken cancellationToken = default) => await Task.Run(() => Start(port), cancellationToken);
@@ -49,9 +74,15 @@ internal sealed class MistwoodProxy : IMistwoodProxy, IAsyncDisposable
             ArgumentOutOfRangeException.ThrowIfLessThan(port, 1);
             ArgumentOutOfRangeException.ThrowIfGreaterThan(port, 65535);
             
-            if (_endPoint is not null)
+            if (_endPoint is not null && _proxyServer.ProxyEndPoints.Contains(_endPoint))
             {
                 _proxyServer.RemoveEndPoint(_endPoint);
+                _endPoint = null;
+            }
+            
+            if (!_certificateLazy.Value)
+            {
+                throw new ProxyStartException("Failed to generate root certificate");
             }
 
             _endPoint = new ExplicitProxyEndPoint(IPAddress.Any, port, true);
@@ -137,12 +168,18 @@ internal sealed class MistwoodProxy : IMistwoodProxy, IAsyncDisposable
             .ToDictionary(h => h.Name, h => string.Join(";", h.Value));
             
         var body = await e.GetResponseBodyAsString();
+        var timestamp = e.TimeLine.Values.OrderByDescending(v => v).FirstOrDefault();
+        // convert to UTC DateTimeOffset
+        var localTimeOffset = DateTimeOffset.Now.Offset;
+        var isUtc = timestamp.Kind is DateTimeKind.Utc;
+        var timestampUtc = isUtc ? timestamp : new DateTimeOffset(timestamp, localTimeOffset).ToUniversalTime();
             
         var args = new MistwoodResponseEventArgs(
             uri,
             (int)e.HttpClient.Response.StatusCode,
             headers,
-            body
+            body,
+            timestampUtc
         );
             
         if (ResponseInterceptedAsync is not null)

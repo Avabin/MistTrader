@@ -61,7 +61,11 @@ class Program
             var services = scope.ServiceProvider;
             
             App.ServiceProvider = services;
-            return appBuilder.StartWithClassicDesktopLifetime(args);
+            var code = appBuilder.StartWithClassicDesktopLifetime(args);
+
+            _ = host.StopAsync();
+            host.WaitForShutdown();
+            return code;
         }
         catch (Exception ex)
         {

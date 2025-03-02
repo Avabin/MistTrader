@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MistTrader.UI.ViewModels.Proxy"
+             xmlns:converters="using:MistTrader.UI.Converters"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+             x:Class="MistTrader.UI.Views.ProxyView"
+             x:DataType="vm:ProxyViewModel">
+
+    <UserControl.Resources>
+        <converters:StatusColorConverter x:Key="StatusColorConverter" />
+        <converters:BytesDisplayConverter x:Key="BytesDisplayConverter" />
+    </UserControl.Resources>
+
+    <Grid Background="{DynamicResource BackgroundGradient}" RowDefinitions="Auto, Auto, Auto">
+        <Border Classes="card">
+            <StackPanel Spacing="16">
+                <!-- Title -->
+                <TextBlock Text="Proxy Control"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           Margin="0,0,0,16" />
+
+                <!-- Status -->
+                <Border Background="#2D2B55"
+                        CornerRadius="4"
+                        Padding="8">
+                    <TextBlock Text="{Binding Status}"
+                               Classes="status"
+                               Foreground="{Binding IsRunning, 
+                                 Converter={StaticResource StatusColorConverter}}" />
+                </Border>
+
+                <!-- Port Configuration -->
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" Margin="0,8">
+                    <TextBlock Text="Port:"
+                               VerticalAlignment="Center"
+                               Foreground="White" />
+                    <NumericUpDown Grid.Column="1"
+                                   Classes="proxy"
+                                   Value="{Binding Port}"
+                                   Minimum="1"
+                                   Maximum="65535" />
+                </Grid>
+
+                <!-- Captured Responses -->
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" Margin="0,8">
+                    <TextBlock Text="Captured:"
+                               VerticalAlignment="Center"
+                               Foreground="White" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding CapturedResponses.Count}"
+                               VerticalAlignment="Center"
+                               Foreground="White"
+                               Margin="8,0,0,0" />
+                </Grid>
+
+                <!-- Control Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0">
+                    <Button Content="Start"
+                            Command="{Binding StartProxyCommand}"
+                            Classes="proxy" />
+                    <Button Content="Stop"
+                            Command="{Binding StopProxyCommand}"
+                            Classes="proxy" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <!-- Latest Responses Section -->
+        <Grid Grid.Row="2" RowDefinitions="Auto,*" Margin="0,16,0,0">
+            <!-- Header -->
+            <TextBlock Text="Latest Responses"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                       Margin="0,0,0,8" />
+
+            <!-- Responses List -->
+            <Border Grid.Row="1"
+                    Classes="card"
+                    Background="#1E1E3F"
+                    MaxHeight="250">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding CapturedResponses}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,4"
+                                        Padding="8"
+                                        Background="#2D2B55"
+                                        CornerRadius="4">
+                                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto,Auto, Auto">
+                                        <!-- URL -->
+                                        <TextBlock Text="{Binding Url}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="White"
+                                                   FontWeight="Medium" />
+
+                                        <!-- Timestamp -->
+                                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                                   Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss.fff}}"
+                                                   Foreground="#9B6BFE"
+                                                   Margin="8,0,0,0" />
+
+                                        <!-- Response Length -->
+                                        <StackPanel Grid.Row="1"
+                                                    Grid.ColumnSpan="2" Grid.Column="0"
+                                                    Orientation="Horizontal"
+                                                    Margin="0,4,0,0">
+                                            <TextBlock Text="Size: "
+                                                       Foreground="#9B6BFE"
+                                                       FontSize="12" />
+                                            <TextBlock
+                                                Text="{Binding ResponseLength, Converter={StaticResource BytesDisplayConverter}}"
+                                                Foreground="White"
+                                                FontSize="12" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

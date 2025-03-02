@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Controls\" />
         <Folder Include="Models\"/>
         <AvaloniaResource Include="Assets\**"/>
         <Folder Include="ViewModels\" />
@@ -26,8 +27,11 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.1"/>
+        <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+        <PackageReference Include="MessageBox.Avalonia.Markdown" Version="3.2.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+        <PackageReference Include="Riok.Mapperly" Version="4.1.1" />
         <PackageReference Include="Splat.Autofac" Version="15.3.1" />
         <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="15.3.1" />
     </ItemGroup>

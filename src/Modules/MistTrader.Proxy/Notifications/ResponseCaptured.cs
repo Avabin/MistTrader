@@ -2,4 +2,4 @@ using MediatR;
 
 namespace MistTrader.Proxy.Notifications;
 
-public record ResponseCaptured(Uri Url, string Response) : INotification;
+public readonly record struct ResponseCaptured(Uri Url, string Response, DateTimeOffset Timestamp) : INotification;

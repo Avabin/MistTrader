@@ -25,14 +25,14 @@ public class MistwoodResponseEventArgs : EventArgs
     /// <summary>
     /// Timestamp of the response (UTC)
     /// </summary>
-    public DateTime Timestamp { get; }
+    public DateTimeOffset Timestamp { get; }
         
-    public MistwoodResponseEventArgs(Uri requestUrl, int statusCode, IDictionary<string, string> headers, string? body)
+    public MistwoodResponseEventArgs(Uri requestUrl, int statusCode, IDictionary<string, string> headers, string? body, DateTimeOffset? timestamp = null)
     {
         RequestUrl = requestUrl;
         StatusCode = statusCode;
         Headers = headers;
         Body = body;
-        Timestamp = DateTime.UtcNow;
+        Timestamp = timestamp ?? DateTimeOffset.UtcNow;
     }
 }

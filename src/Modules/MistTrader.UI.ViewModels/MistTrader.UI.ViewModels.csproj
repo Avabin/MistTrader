@@ -19,8 +19,4 @@
       <ProjectReference Include="..\MistTrader.Proxy\MistTrader.Proxy.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Proxy\" />
-    </ItemGroup>
-
 </Project>

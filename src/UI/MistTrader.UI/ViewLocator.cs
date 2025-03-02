@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using MistTrader.UI.ViewModels;
@@ -18,8 +19,16 @@ public class ViewLocator : IDataTemplate
         var viewType = typeof(IViewFor<>).MakeGenericType(viewModelType);
         if (App.ServiceProvider is not { } provider) throw new InvalidOperationException("Service provider is not set");
         var view = provider.GetService(viewType);
+        #if DEBUG
+        Debug.WriteLine($"ViewLocator.Build: {viewModelType.Name} => {view?.GetType().Name}");
+        #endif
         if (view is Control control)
         {
+            control.DataContext = viewModel;
+            if (view is IViewFor viewFor)
+            {
+                viewFor.ViewModel = viewModel;
+            }
             return control;
         }
 
@@ -27,5 +36,12 @@ public class ViewLocator : IDataTemplate
             { Text = "View registered in DI container for view model: " + viewModelType.Name };
     }
 
-    public bool Match(object? data) => data is IViewModel;
+    public bool Match(object? data)
+    {
+        var match = data is ViewModel or IViewModel;
+        #if DEBUG
+        Debug.WriteLine($"ViewLocator.Match: {data?.GetType().Name} => {match}");
+        #endif
+        return match;
+    }
 }

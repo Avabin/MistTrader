@@ -6,11 +6,11 @@ using MistTrader.Proxy.Notifications;
 
 namespace MistTrader.Proxy.Services;
 
-internal class MistwoodProxyEventPublisher(IMistwoodProxy proxy, IMediator mediator, ILogger<MistwoodProxyEventPublisher> logger) : IHostedService
+internal class MistwoodProxyCaptureEventPublisher(IMistwoodProxy proxy, IMediator mediator, ILogger<MistwoodProxyCaptureEventPublisher> logger) : IHostedService
 {
     private readonly IMistwoodProxy _proxy = proxy;
     private readonly IMediator _mediator = mediator;
-    private readonly ILogger<MistwoodProxyEventPublisher> _logger = logger;
+    private readonly ILogger<MistwoodProxyCaptureEventPublisher> _logger = logger;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -22,7 +22,7 @@ internal class MistwoodProxyEventPublisher(IMistwoodProxy proxy, IMediator media
     private async Task OnProxyResponseInterceptedAsync(MistwoodResponseEventArgs e)
     {
         _logger.LogDebug("Response intercepted from {Url}", e.RequestUrl);
-        await _mediator.Publish(new ResponseCaptured(e.RequestUrl, e.Body ?? ""));
+        await _mediator.Publish(new ResponseCaptured(e.RequestUrl, e.Body ?? "", e.Timestamp));
     }
 
 

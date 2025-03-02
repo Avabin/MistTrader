@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using MistTrader.UI.ViewModels;
+using MistTrader.UI.ViewModels.Main;
 using MistTrader.UI.Views;
 
 namespace MistTrader.UI;
@@ -23,6 +24,9 @@ public partial class App : Application
             if (ServiceProvider is null)
                 throw new InvalidOperationException("Service provider is not set");
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            var viewModel = ServiceProvider.GetRequiredService<MainViewModel>();
+            mainWindow.DataContext = viewModel;
+            mainWindow.ViewModel = viewModel;
             desktop.MainWindow = mainWindow;
         }
 

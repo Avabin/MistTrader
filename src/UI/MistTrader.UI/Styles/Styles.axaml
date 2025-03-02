@@ -1,0 +1,20 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    
+    <Style Selector="Button.accent">
+        <Setter Property="Background" Value="#7B4AFA"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <FluentTheme />
+    <StyleInclude Source="/Styles/ProxyStyles.axaml"/>
+    <StyleInclude Source="avares://MsBox.Avalonia.Markdown/Controls/MarkdownView.axaml" />
+    <StyleInclude Source="/Styles/MessageBox.axaml"></StyleInclude>
+</Styles>
