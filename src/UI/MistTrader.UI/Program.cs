@@ -6,7 +6,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using MistTrader.UI.Views;
 using ReactiveUI;
 using Splat;
 using Splat.Autofac;
@@ -15,55 +14,57 @@ namespace MistTrader.UI;
 
 class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
     public static int Main(string[] args)
     {
-        var builder = Host.CreateApplicationBuilder(args);
+        var builder = Host.CreateDefaultBuilder(args);
         
         // Configure Autofac
-        var provider = new AutofacServiceProviderFactory();
-        builder.ConfigureContainer(provider, containerBuilder =>
+        builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.ConfigureContainer<ContainerBuilder>(static (HostBuilderContext context, ContainerBuilder containerBuilder) =>
         {
-            var locator = new AutofacDependencyResolver(containerBuilder);
-            Locator.SetLocator(locator);
-            Locator.CurrentMutable.InitializeSplat();
-            Locator.CurrentMutable.InitializeReactiveUI();
+            // Create and configure AutofacDependencyResolver using the extension method
+            var resolver = containerBuilder.UseAutofacDependencyResolver();
+            
+            // Register the resolver itself so it can be resolved later if needed
+            containerBuilder.RegisterInstance(resolver);
+            
+            // Initialize ReactiveUI with the resolver
+            resolver.InitializeReactiveUI();
+            
+            // Register Avalonia-specific services
+            containerBuilder.Register(_ => new AvaloniaActivationForViewFetcher())
+                .As<IActivationForViewFetcher>()
+                .SingleInstance();
+                
+            containerBuilder.Register(_ => new AutoDataTemplateBindingHook())
+                .As<IPropertyBindingHook>()
+                .SingleInstance();
+                
+            // Set up ReactiveUI scheduler
+            RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
+            
+            // Register your application services
             containerBuilder.RegisterModule<AutofacModule>();
         });
-        
-        // Configure services
-        ConfigureServices(builder.Services);
-        
-        var appBuilder = BuildAvaloniaApp();
 
+        var appBuilder = BuildAvaloniaApp();
         var host = builder.Build();
+        host.Start();
 
         try
         {
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
+            
             App.ServiceProvider = services;
-            appBuilder.StartWithClassicDesktopLifetime(args);
-
-            return 0;
+            return appBuilder.StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)
         {
-            // Log the exception here
+            Console.WriteLine(ex);
             return 1;
         }
-    }
-
-    private static void ConfigureServices(IServiceCollection services)
-    {
-        services.AddSingleton<MainWindow>();
-        
-        // Register your other services here
-        // services.AddScoped<IYourService, YourService>();
-        // services.AddTransient<IDataService, DataService>();
     }
     
     // Avalonia configuration, don't remove; also used by visual designer.
@@ -73,6 +74,4 @@ class Program
             .WithInterFont()
             .LogToTrace()
             .UseReactiveUI();
-    
-    
 }

@@ -11,6 +11,7 @@
     <ItemGroup>
         <Folder Include="Models\"/>
         <AvaloniaResource Include="Assets\**"/>
+        <Folder Include="ViewModels\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,5 +30,9 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
         <PackageReference Include="Splat.Autofac" Version="15.3.1" />
         <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="15.3.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Modules\MistTrader.UI.ViewModels\MistTrader.UI.ViewModels.csproj" />
     </ItemGroup>
 </Project>

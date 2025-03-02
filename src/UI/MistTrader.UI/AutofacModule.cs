@@ -1,4 +1,5 @@
 using Autofac;
+using MistTrader.UI.ViewModels;
 using MistTrader.UI.Views;
 using Module = Autofac.Module;
 
@@ -9,10 +10,11 @@ public class AutofacModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         // Register your ViewModels
-        builder.RegisterType<MainWindow>().SingleInstance();
+        builder.RegisterModule<ViewModelsModule>();
         
         // Register your Views
-        // builder.RegisterType<YourView>();
+        builder.RegisterType<MainWindow>().SingleInstance().AsImplementedInterfaces().AsSelf();
+        
         
         // Register your ViewModels
         // builder.RegisterType<YourViewModel>();

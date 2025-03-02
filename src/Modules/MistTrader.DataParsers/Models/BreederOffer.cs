@@ -16,4 +16,15 @@ public record BreederOffer
     
     [JsonPropertyName("silver")]
     public required long Silver { get; init; }
+    
+    [JsonIgnore]
+    public static BreederOffer Empty => new()
+    {
+        Id = 0,
+        BreederId = 0,
+        ItemId = "",
+        Silver = 0
+    };
+    
+    public static bool IsEmpty(BreederOffer offer) => offer.Equals(Empty);
 }
