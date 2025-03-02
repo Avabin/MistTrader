@@ -3,12 +3,31 @@
         xmlns:vm="using:MistTrader.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MistTrader.UI"
+        xmlns:main="clr-namespace:MistTrader.UI.ViewModels.Main;assembly=MistTrader.UI.ViewModels"
+        xmlns:views="clr-namespace:MistTrader.UI.Views"
+        xmlns:proxy="clr-namespace:MistTrader.UI.ViewModels.Proxy;assembly=MistTrader.UI.ViewModels"
+        xmlns:dialogs="clr-namespace:AvaloniaDialogs.Views;assembly=AvaloniaDialogs"
+        xmlns:reactiveUi="http://reactiveui.net"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MistTrader.UI.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
+        x:DataType="main:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="MistTrader.UI">
+        Title="MistTrader">
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+    <dialogs:ReactiveDialogHost CloseOnClickAway="True">
+        <Grid RowDefinitions="Auto,*">
+            <Menu Grid.Row="0" Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Classes="main-menu">
+                <MenuItem Header="_Navigation">
+                    <MenuItem Header="_Proxy" Command="{Binding NavigateToProxyCommand}"/>
+                    <MenuItem Header="_User Context" Command="{Binding NavigateToUserContextCommand}"/>
+                </MenuItem>
+            </Menu>
+            <reactiveUi:RoutedViewHost Grid.Row="1" Router="{Binding Router}">
+                <reactiveUi:RoutedViewHost.ViewLocator>
+                    <local:ViewLocator />
+                </reactiveUi:RoutedViewHost.ViewLocator>
+            </reactiveUi:RoutedViewHost>
+        </Grid>
+    </dialogs:ReactiveDialogHost>
 </Window>

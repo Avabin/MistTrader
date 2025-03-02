@@ -1,0 +1,56 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        
+    <Style Selector="Border.inventory-item">
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Margin" Value="4"/>
+    </Style>
+
+    <Style Selector="TextBlock.inventory-item-name">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style Selector="TextBlock.inventory-item-type">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Opacity" Value="0.7"/>
+    </Style>
+
+    <Style Selector="TextBlock.inventory-item-count">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="16"/>
+    </Style>
+    
+    <Style Selector="Border.transaction-item">
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Margin" Value="4"/>
+    </Style>
+
+    <Style Selector="TextBlock.transaction-description">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style Selector="TextBlock.transaction-timestamp">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Opacity" Value="0.7"/>
+    </Style>
+
+    <Style Selector="TextBlock.transaction-amount">
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="PathIcon.transaction-icon">
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+    </Style>
+</Styles>

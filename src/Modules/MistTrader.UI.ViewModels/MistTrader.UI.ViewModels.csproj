@@ -11,16 +11,21 @@
       <PackageReference Include="Avabin.Commons.ReactiveCommandGenerator" Version="1.0.4" />
       <PackageReference Include="Avabin.Commons.ReactiveCommandGenerator.Core" Version="1.0.2" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="ReactiveUI" Version="20.1.1" />
       <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MistTrader.DataExtraction\MistTrader.DataExtraction.csproj" />
       <ProjectReference Include="..\MistTrader.Proxy\MistTrader.Proxy.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Proxy\" />
+      <Reference Include="Avalonia.Base">
+        <HintPath>..\..\UI\MistTrader.UI\bin\Debug\net9.0\Avalonia.Base.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

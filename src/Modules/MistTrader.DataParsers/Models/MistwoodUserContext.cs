@@ -8,7 +8,7 @@ public record MistwoodUserContext
     /// <summary>
     /// The breeder ID of the user
     /// </summary>
-    public long BreederId => Profile.Id;
+    public long BreederId => Profile.Id ?? 0;
     
     /// <summary>
     /// The username of the user
@@ -53,14 +53,6 @@ public record MistwoodUserContext
     }
     
     /// <summary>
-    /// Get estimated total value of current inventory in silver
-    /// </summary>
-    public long CalculateInventoryValue()
-    {
-        return Inventory.Sum(item => item.Silver * item.Count);
-    }
-    
-    /// <summary>
     /// Creates a new MistwoodUserContext with updated inventory
     /// </summary>
     public MistwoodUserContext WithInventory(IReadOnlyList<InventoryItem> newInventory)
@@ -79,6 +71,7 @@ public record MistwoodUserContext
     {
         var allTransactions = Transactions.Concat(newTransactions)
             .OrderBy(t => t.CreatedAt)
+            .DistinctBy(x => x.Id)
             .ToList();
             
         return this with

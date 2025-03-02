@@ -1,0 +1,236 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MsBox.Avalonia.Controls"
+        xmlns:converters="using:MsBox.Avalonia.Converters"
+        xmlns:viewModels="clr-namespace:MsBox.Avalonia.ViewModels;assembly=MsBox.Avalonia"
+        xmlns:windows="clr-namespace:MsBox.Avalonia.Windows;assembly=MsBox.Avalonia">
+    <Styles.Resources>
+        <converters:ConditionalGridLengthStarConverter x:Key="ConditionalGridLengthStarConverter" />
+
+        <LinearGradientBrush x:Key="MessageBoxBackground" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#20134e"/>
+            <GradientStop Offset="1" Color="#301934"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="ButtonBackground" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#4B0082" />
+            <GradientStop Offset="1" Color="#663399" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="ButtonBackgroundPointerOver" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#663399" />
+            <GradientStop Offset="1" Color="#8B008B" />
+        </LinearGradientBrush>
+    </Styles.Resources>
+    <Style Selector="controls|MsBoxStandardView" x:DataType="viewModels:MsBoxStandardViewModel">
+        <Style.Resources>
+            <SolidColorBrush x:Key="MessageBoxBorderBrush" Color="{DynamicResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="MessageBoxBackground" Color="{DynamicResource SystemAltHighColor}" />
+        </Style.Resources>
+        <Setter Property="Background">
+            <DynamicResource ResourceKey="MessageBoxBackground" />
+        </Setter>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{DynamicResource MessageBoxBackground}"
+                        CornerRadius="8"
+                        Margin="1"
+                        Padding="16"
+                        BoxShadow="0 4 15 0 #60000000">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <Grid Classes="MsBoxStandardContainer">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition
+                                Height="{Binding Path=!IsInputMultiline, Converter={StaticResource ConditionalGridLengthStarConverter}}" />
+                            <RowDefinition Height="15" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition
+                                Height="{Binding Path=IsInputMultiline, Converter={StaticResource ConditionalGridLengthStarConverter}}" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Icon -->
+                        <Image Grid.Row="0" Grid.Column="0"
+                               IsVisible="{Binding HasIcon}"
+                               Source="{Binding ImagePath}"
+                               Classes="animated">
+                            <Image.Transitions>
+                                <Transitions>
+                                    <TransformOperationsTransition Property="RenderTransform"
+                                                                   Duration="0:0:0.2"
+                                                                   Easing="CubicEaseOut" />
+                                </Transitions>
+                            </Image.Transitions>
+                        </Image>
+
+                        <Grid Grid.Row="0" Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Header -->
+                            <TextBox Grid.Row="0"
+                                     Classes="header styled"
+                                     Text="{Binding ContentHeader}"
+                                     IsVisible="{Binding HasHeader}">
+                                <TextBox.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Opacity"
+                                                          Duration="0:0:0.2" />
+                                    </Transitions>
+                                </TextBox.Transitions>
+                            </TextBox>
+
+                            <!-- Content -->
+                            <TextBox Grid.Row="1"
+                                     Name="ContentTextBox"
+                                     Classes="contentMessage styled"
+                                     Text="{Binding ContentMessage}"
+                                     IsVisible="{Binding !Markdown}">
+                                <TextBox.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Opacity"
+                                                          Duration="0:0:0.2"
+                                                          Delay="0:0:0.1" />
+                                    </Transitions>
+                                </TextBox.Transitions>
+                            </TextBox>
+                        </Grid>
+
+                        <!-- Buttons -->
+                        <StackPanel Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8">
+                            <Button Classes="button ok"
+                                    Name="OkButton"
+                                    Content="OK"
+                                    Command="{Binding ButtonClickCommand}"
+                                    CommandParameter="{Binding $self.Content}"
+                                    IsVisible="{Binding IsOkShowed}" />
+                            <Button Classes="button yes"
+                                    Name="YesButton"
+                                    Content="Yes"
+                                    Command="{Binding ButtonClickCommand}"
+                                    CommandParameter="{Binding $self.Content}"
+                                    IsVisible="{Binding IsYesShowed}" />
+                            <Button Classes="button no"
+                                    Content="No"
+                                    Command="{Binding ButtonClickCommand}"
+                                    CommandParameter="{Binding $self.Content}"
+                                    IsVisible="{Binding IsNoShowed}" />
+                            <Button Classes="button abort"
+                                    Content="Abort"
+                                    Command="{Binding ButtonClickCommand}"
+                                    CommandParameter="{Binding $self.Content}"
+                                    IsVisible="{Binding IsAbortShowed}" />
+                            <Button Classes="button cancel"
+                                    Content="Cancel"
+                                    Command="{Binding ButtonClickCommand}"
+                                    CommandParameter="{Binding $self.Content}"
+                                    IsVisible="{Binding IsCancelShowed}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        Name="PART_ButtonBorder">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                        </Transitions>
+                    </Border.Transitions>
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="RenderTransform" Value="none" />
+    </Style>
+
+    <Style Selector="Button /template/ Border#PART_ButtonBorder">
+        <Setter Property="BoxShadow" Value="0 0 0 0 #00000000" />
+    </Style>
+
+    <Style Selector="Button:pointerover /template/ Border#PART_ButtonBorder">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+        <Setter Property="BoxShadow" Value="0 0 10 2 #804B0082" />
+        <Setter Property="RenderTransform" Value="scale(1.05)" />
+    </Style>
+
+    <Style Selector="Button:pressed /template/ Border#PART_ButtonBorder">
+        <Setter Property="RenderTransform" Value="scale(0.95)" />
+        <Setter Property="BoxShadow" Value="0 0 5 1 #804B0082" />
+    </Style>
+
+    <Style Selector="TextBox.styled">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="SelectionBrush" Value="#8B008B" />
+        <Setter Property="SelectionForegroundBrush" Value="White" />
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    
+        <!-- Add window style -->
+    <Style Selector="windows|MsBoxWindow">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="TransparencyBackgroundFallback" Value="Transparent"/>
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
+        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
+        <Setter Property="SystemDecorations" Value="None"/>
+        <Setter Property="WindowStartupLocation" Value="CenterOwner"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border Name="PART_TransparencyFallback" IsHitTestVisible="False" />
+                    <Border Name="PART_Background" 
+                            Background="{TemplateBinding Background}" 
+                            IsHitTestVisible="False" />
+                    <Panel Name="PART_ClientArea" 
+                           Background="Transparent">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Margin="0"/>
+                    </Panel>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

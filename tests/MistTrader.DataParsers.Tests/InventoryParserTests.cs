@@ -50,7 +50,7 @@ public class InventoryParserTests
               .And.HaveCount(3);
 
         var firstItem = result.First();
-        firstItem.Should().BeEquivalentTo(new InventoryItem
+        firstItem.Should().BeEquivalentTo(new InventoryItemDetails
         {
             ItemId = "CrystalWater",
             Count = 100,
@@ -84,7 +84,7 @@ public class InventoryParserTests
         result.Should().NotBeNull()
               .And.HaveCount(3);
 
-        result.Should().ContainEquivalentOf(new InventoryItem
+        result.Should().ContainEquivalentOf(new InventoryItemDetails
         {
             ItemId = "PandoraBox",
             Count = 1,
@@ -112,7 +112,7 @@ public class InventoryParserTests
         result.Should().NotBeNull()
               .And.HaveCount(3);
 
-        result.Should().ContainEquivalentOf(new InventoryItem
+        result.Should().ContainEquivalentOf(new InventoryItemDetails
         {
             ItemId = "SoulBoundItem",
             Count = 1,
@@ -159,7 +159,7 @@ public class InventoryParserTests
         result.Should().NotBeNull().And.BeEmpty();
     }
 
-    private static InventoryItem CreateInventoryItem(
+    private static InventoryItemDetails CreateInventoryItem(
         string itemId,
         int count,
         int level,
@@ -167,7 +167,7 @@ public class InventoryParserTests
         bool soulBound,
         long silver)
     {
-        return new InventoryItem
+        return new InventoryItemDetails
         {
             ItemId = itemId,
             Count = count,

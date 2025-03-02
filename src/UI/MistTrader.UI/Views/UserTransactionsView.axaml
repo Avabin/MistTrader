@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userContext="clr-namespace:MistTrader.UI.ViewModels.UserContext;assembly=MistTrader.UI.ViewModels"
+             xmlns:views="clr-namespace:MistTrader.UI.Views"
+             xmlns:ui="clr-namespace:MistTrader.UI"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="MistTrader.UI.Views.UserTransactionsView"
+             x:DataType="userContext:UserTransactionsViewModel">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Transaction History" Classes="h1"/>
+        <ScrollViewer>
+            <ItemsRepeater ItemsSource="{Binding Transactions}">
+                <ItemsRepeater.ItemTemplate>
+                    <ui:ViewLocator />
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

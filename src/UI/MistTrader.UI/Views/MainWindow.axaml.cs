@@ -1,15 +1,17 @@
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using MistTrader.UI.ViewModels;
+using ReactiveUI;
+using MainViewModel = MistTrader.UI.ViewModels.Main.MainViewModel;
 
 namespace MistTrader.UI.Views;
 
 public partial class MainWindow : ReactiveWindow<MainViewModel>
 {
-    public MainWindow(MainViewModel viewModel)
+    public MainWindow()
     {
-        ViewModel = viewModel;
-        DataContext = viewModel;
         InitializeComponent();
+        
+        this.WhenActivated(d =>
+        {
+        });
     }
 }

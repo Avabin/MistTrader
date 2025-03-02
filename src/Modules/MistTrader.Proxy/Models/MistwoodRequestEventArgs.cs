@@ -20,14 +20,14 @@ public class MistwoodRequestEventArgs : EventArgs
     /// <summary>
     /// Request body (if any)
     /// </summary>
-    public string? Body { get; }
+    public ReadOnlyMemory<byte>? Body { get; }
         
     /// <summary>
     /// Timestamp of the request (UTC)
     /// </summary>
     public DateTime Timestamp { get; }
         
-    public MistwoodRequestEventArgs(Uri url, string method, IDictionary<string, string> headers, string? body)
+    public MistwoodRequestEventArgs(Uri url, string method, IDictionary<string, string> headers, ReadOnlyMemory<byte>? body)
     {
         Url = url;
         Method = method;

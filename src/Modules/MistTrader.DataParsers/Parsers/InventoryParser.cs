@@ -10,7 +10,7 @@ public class InventoryParser
         PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
-
+    
     /// <summary>
     /// Synchronously parses inventory items from JSON string
     /// </summary>
@@ -22,25 +22,6 @@ public class InventoryParser
             return items ?? [];
         }
         catch (JsonException)
-        {
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Synchronously parses inventory items from JSON file
-    /// </summary>
-    public static IReadOnlyList<InventoryItem> ParseFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-            return [];
-
-        try
-        {
-            var json = File.ReadAllText(filePath);
-            return ParseInventory(json);
-        }
-        catch (Exception)
         {
             return [];
         }

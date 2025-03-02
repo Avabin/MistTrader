@@ -15,7 +15,7 @@ public static class ServicesExtensions
     {
         services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<StartProxy>());
         services.AddSingleton<IMistwoodProxy, MistwoodProxy>();
-        services.AddHostedService<MistwoodProxyEventPublisher>();
+        services.AddHostedService<MistwoodProxyCaptureEventPublisher>();
         
         return services;
     }

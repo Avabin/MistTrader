@@ -120,7 +120,7 @@ public class ZipLoaderTests
         result.Should().NotBeNull()
             .And.HaveCount(3);
 
-        result.Should().ContainEquivalentOf(new InventoryItem
+        result.Should().ContainEquivalentOf(new InventoryItemDetails
         {
             ItemId = "CrystalWater",
             Count = 50,
@@ -267,7 +267,7 @@ public class ZipLoaderTests
         };
     }
 
-    private static InventoryItem CreateInventoryItem(
+    private static InventoryItemDetails CreateInventoryItem(
         string itemId,
         int count,
         int level,
@@ -275,7 +275,7 @@ public class ZipLoaderTests
         bool soulBound,
         long silver)
     {
-        return new InventoryItem
+        return new InventoryItemDetails
         {
             ItemId = itemId,
             Count = count,

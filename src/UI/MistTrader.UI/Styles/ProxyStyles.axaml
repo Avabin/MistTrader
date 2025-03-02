@@ -1,0 +1,54 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Style Selector="Button.proxy">
+        <Setter Property="Background" Value="{DynamicResource ButtonGradient}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="MinWidth" Value="100"/>
+    </Style>
+    
+    <Style Selector="Button.proxy:pointerover">
+        <Setter Property="Opacity" Value="0.9"/>
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+    </Style>
+    
+    <Style Selector="NumericUpDown.proxy">
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="MinWidth" Value="120"/>
+        <Setter Property="Background" Value="#2D2B55"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <Style Selector="TextBlock.status">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="#1E1E3F"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="8"/>
+        <Setter Property="BoxShadow" Value="0 2 10 0 #0F0F1E"/>
+    </Style>
+    
+    <Style Selector="ItemsControl > ContentPresenter">
+        <Setter Property="Margin" Value="0,2"/>
+    </Style>
+
+    <Style Selector="Border.response-item">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.response-item:pointerover">
+        <Setter Property="Background" Value="#3D3B65"/>
+    </Style>
+</Styles>

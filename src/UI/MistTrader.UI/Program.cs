@@ -6,10 +6,12 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using Microsoft.Extensions.Logging;
 using MistTrader.UI.ViewModels;
 using ReactiveUI;
 using Splat;
 using Splat.Autofac;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace MistTrader.UI;
 
@@ -50,6 +52,8 @@ class Program
         });
 
         builder.ConfigureServices(ConfigureAppServices);
+        
+        builder.ConfigureLogging(c => c.SetMinimumLevel(LogLevel.Debug));
 
         var appBuilder = BuildAvaloniaApp();
         var host = builder.Build();
@@ -61,7 +65,11 @@ class Program
             var services = scope.ServiceProvider;
             
             App.ServiceProvider = services;
-            return appBuilder.StartWithClassicDesktopLifetime(args);
+            var code = appBuilder.StartWithClassicDesktopLifetime(args);
+
+            _ = host.StopAsync();
+            host.WaitForShutdown();
+            return code;
         }
         catch (Exception ex)
         {

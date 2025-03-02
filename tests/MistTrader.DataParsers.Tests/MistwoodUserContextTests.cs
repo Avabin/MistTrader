@@ -8,7 +8,7 @@ namespace MistTrader.DataParsers.Tests;
 public class MistwoodUserContextTests
 {
     private MistwoodUserContext _context = null!;
-    private readonly long _testBreederId = 6305;
+    private readonly int _testBreederId = 6305;
     private readonly string _testUsername = "TestUser";
 
     [SetUp]
@@ -169,7 +169,7 @@ public class MistwoodUserContextTests
         };
     }
 
-    private static InventoryItem CreateInventoryItem(
+    private static InventoryItemDetails CreateInventoryItem(
         string itemId,
         int count,
         int level,
@@ -177,7 +177,7 @@ public class MistwoodUserContextTests
         bool soulBound,
         long silver)
     {
-        return new InventoryItem
+        return new InventoryItemDetails
         {
             ItemId = itemId,
             Count = count,

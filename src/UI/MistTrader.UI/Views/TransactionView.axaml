@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userContext="clr-namespace:MistTrader.UI.ViewModels.UserContext;assembly=MistTrader.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="60"
+             x:Class="MistTrader.UI.Views.TransactionView"
+             x:DataType="userContext:TransactionViewModel">
+    <Border Classes="transaction-item">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <PathIcon Grid.Column="0"
+                      Classes="transaction-icon"
+                      Data="{StaticResource ArrowCircleUpRegularIcon}"/>
+            <StackPanel Grid.Column="1" Margin="12,0">
+                <TextBlock Text="{Binding Maker}" Classes="transaction-description"/>
+                <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:g}}" Classes="transaction-timestamp"/>
+            </StackPanel>
+            <Grid Grid.Column="2" ColumnDefinitions="1*, 1*">
+                <PathIcon Classes="silver"
+                          IsVisible="{Binding Silver, Converter={x:Static ObjectConverters.IsNotNull}}"
+                          Data="{StaticResource CoinRegularIcon}"/>
+                <TextBlock Grid.Column="1" Classes="transaction-amount">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding Path="Silver"/>
+                            <Binding Path="Count"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

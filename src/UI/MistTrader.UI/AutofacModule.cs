@@ -1,4 +1,5 @@
 using Autofac;
+using MistTrader.UI.Services;
 using MistTrader.UI.ViewModels;
 using MistTrader.UI.Views;
 using Module = Autofac.Module;
@@ -14,14 +15,19 @@ public class AutofacModule : Module
         
         // Register your Views
         builder.RegisterType<MainWindow>().SingleInstance().AsImplementedInterfaces().AsSelf();
+        builder.RegisterType<ProxyView>().AsImplementedInterfaces().AsSelf();
+        builder.RegisterType<UserContextView>().AsImplementedInterfaces().AsSelf();
         
+        builder.RegisterType<UserProfileView>().AsImplementedInterfaces().AsSelf();
+        builder.RegisterType<UserInventoryView>().AsImplementedInterfaces().AsSelf();
+        builder.RegisterType<InventoryItemView>().AsImplementedInterfaces().AsSelf();
         
-        // Register your ViewModels
-        // builder.RegisterType<YourViewModel>();
-        
+        builder.RegisterType<UserTransactionsView>().AsImplementedInterfaces().AsSelf();
+        builder.RegisterType<TransactionView>().AsImplementedInterfaces().AsSelf();
+
         // Register your Services
-        // builder.RegisterType<YourService>()
-        //     .As<IYourService>()
-        //     .SingleInstance();
+        builder.RegisterType<DialogHostMessageBoxService>()
+            .AsImplementedInterfaces()
+            .SingleInstance();  // SingleInstance since we want one service
     }
 }

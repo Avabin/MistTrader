@@ -319,11 +319,11 @@ public class TradeStatsCalculatorTests
     public void CalculateInventoryStats_ShouldCalculateCorrectStatistics()
     {
         // Arrange
-        var inventoryItems = new List<InventoryItem>
+        var inventoryItems = new List<InventoryItemDetails>
         {
-            new InventoryItem { ItemId = "Item1", Count = 10, Level = 1, IsIdentified = true, SoulBound = false, Silver = 100 },
-            new InventoryItem { ItemId = "Item2", Count = 5, Level = 2, IsIdentified = true, SoulBound = false, Silver = 200 },
-            new InventoryItem { ItemId = "Item3", Count = 15, Level = 3, IsIdentified = true, SoulBound = false, Silver = 50 }
+            new InventoryItemDetails { ItemId = "Item1", Count = 10, Level = 1, IsIdentified = true, SoulBound = false, Silver = 100 },
+            new InventoryItemDetails { ItemId = "Item2", Count = 5, Level = 2, IsIdentified = true, SoulBound = false, Silver = 200 },
+            new InventoryItemDetails { ItemId = "Item3", Count = 15, Level = 3, IsIdentified = true, SoulBound = false, Silver = 50 }
         };
 
         // Act

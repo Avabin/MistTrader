@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Primary violet colors -->
+    <Color x:Key="PrimaryLight">#9B6BFE</Color>
+    <Color x:Key="Primary">#7B4AFA</Color>
+    <Color x:Key="PrimaryDark">#5C2AF5</Color>
+    
+    <!-- Background gradients -->
+    <LinearGradientBrush x:Key="BackgroundGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="#1A1A2E"/>
+        <GradientStop Offset="1" Color="#2D2B55"/>
+    </LinearGradientBrush>
+    
+    <!-- Button gradients -->
+    <LinearGradientBrush x:Key="ButtonGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="#7B4AFA"/>
+        <GradientStop Offset="1" Color="#9B6BFE"/>
+    </LinearGradientBrush>
+    
+    <!-- Status colors -->
+    <Color x:Key="RunningColor">#4CAF50</Color>
+    <Color x:Key="StoppedColor">#F44336</Color>
+</ResourceDictionary>

@@ -1,23 +1,39 @@
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Commons.ReactiveCommandGenerator.Core;
+using MistTrader.UI.ViewModels.Proxy;
+using MistTrader.UI.ViewModels.UserContext;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MistTrader.UI.ViewModels;
+namespace MistTrader.UI.ViewModels.Main;
 
-public partial class MainViewModel : ViewModel
+public partial class MainViewModel : ViewModel, IScreen, IActivatableViewModel
 {
-    [Reactive]
-    public string Greeting { get; set; } = "";
+    [Reactive] public ProxyViewModel ProxyViewModel { get; set; } = null!;
+    [Reactive] public UserContextViewModel UserContextViewModel { get; set; } = null!;
     
-    [ReactiveCommand(canExecuteMethodName: nameof(CanSayHello))]
-    private void SayHello()
+    [Reactive] public bool CanNavigateTo { get; set; } = false;
+
+    [Reactive] public RoutingState Router { get; set; } = new();
+    public ViewModelActivator Activator { get; } = new();
+    public MainViewModel(Func<ProxyViewModel> proxyViewModelFactory, Func<UserContextViewModel> userContextFactory)
     {
-        Greeting = "Hello, Avalonia!";
-        
+        this.WhenActivated((CompositeDisposable d) =>
+        {
+            ProxyViewModel ??= proxyViewModelFactory();
+            UserContextViewModel ??= userContextFactory();
+            
+            CanNavigateTo = true;
+        });
     }
     
-    // CanExecute command must return IObservable<bool>
-    private IObservable<bool> CanSayHello() => Observable.Return(Greeting == "");
+    private IObservable<bool> CanNavigateToView() => this.WhenAnyValue(x => x.CanNavigateTo);
+    
+    [ReactiveCommand(canExecuteMethodName: nameof(CanNavigateToView))]
+    private async Task<IRoutableViewModel> NavigateToProxy() => await Router.Navigate.Execute(ProxyViewModel);
+
+    [ReactiveCommand(canExecuteMethodName: nameof(CanNavigateToView))]
+    private async Task<IRoutableViewModel> NavigateToUserContext() => await Router.Navigate.Execute(UserContextViewModel);
 }

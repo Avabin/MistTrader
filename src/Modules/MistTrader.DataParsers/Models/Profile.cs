@@ -1,66 +1,116 @@
+using System.Text.Json.Serialization;
+
 namespace DataParsers.Models;
 
-public record Role
-{
-    public required string Type { get; init; }
-}
 
-public record Profile
-{
-    public required long Id { get; init; }
-    public required string Name { get; init; }
-    public required bool HasUnfairAdvantage { get; init; }
-    public string? AvatarUrl { get; init; }
-    public string? PendingAvatarUrl { get; init; }
-    public required string Gender { get; init; }
-    public string? About { get; init; }
-    public required long Silver { get; init; }
-    public required int Rubies { get; init; }
-    public required bool Newsletter { get; init; }
-    public required bool HasFreeDragonLimitExpansion { get; init; }
-    public required int BoughtDragonLimitExpansion { get; init; }
-    public required int AdminDragonLimitExpansion { get; init; }
-    public required int NextNameChangePrice { get; init; }
-    public required int HieroglyphChangePrice { get; init; }
-    public required DateTime LastHieroglyphChangePriceResetAt { get; init; }
-    public required int Level { get; init; }
-    public required int Xp { get; init; }
-    public required int TotalXp { get; init; }
-    public required DateTime CreatedAt { get; init; }
-    public required int RemainingBattles { get; init; }
-    public required DateTime LastRemainingBattlesResetAt { get; init; }
-    public required int RemainingFeedXpGains { get; init; }
-    public required DateTime LastRemainingFeedXpGainsResetAt { get; init; }
-    public required IReadOnlyList<Role> Roles { get; init; }
+// Root myDeserializedClass = JsonSerializer.Deserialize<Root>(myJsonResponse);
+    public record Achievement(
+        [property: JsonPropertyName("id")] string Id,
+        [property: JsonPropertyName("type")] string Type,
+        [property: JsonPropertyName("breederId")] long? BreederId,
+        [property: JsonPropertyName("achievedAt")] DateTimeOffset? AchievedAt
+    );
 
-    public static Profile CreateEmpty()
+    public record DiscordConnection(
+        [property: JsonPropertyName("snowflake")] string Snowflake,
+        [property: JsonPropertyName("username")] string Username,
+        [property: JsonPropertyName("globalName")] string GlobalName,
+        [property: JsonPropertyName("avatar")] string Avatar,
+        [property: JsonPropertyName("mistwoodNick")] string MistwoodNick,
+        [property: JsonPropertyName("mistwoodAvatar")] object MistwoodAvatar,
+        [property: JsonPropertyName("mistwoodJoinedAt")] DateTimeOffset? MistwoodJoinedAt,
+        [property: JsonPropertyName("mistwoodPremiumSince")] object MistwoodPremiumSince
+    );
+
+    public record Dragon(
+        [property: JsonPropertyName("id")] long? Id,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("element")] string Element,
+        [property: JsonPropertyName("appearanceVariant")] int? AppearanceVariant,
+        [property: JsonPropertyName("level")] int? Level,
+        [property: JsonPropertyName("energy")] int? Energy,
+        [property: JsonPropertyName("gender")] string Gender,
+        [property: JsonPropertyName("elo")] int? Elo,
+        [property: JsonPropertyName("owner")] Owner Owner
+    );
+
+    public record Friend(
+        [property: JsonPropertyName("id")] long? Id,
+        [property: JsonPropertyName("roles")] IReadOnlyList<Role> Roles,
+        [property: JsonPropertyName("avatarUrl")] string AvatarUrl,
+        [property: JsonPropertyName("level")] int? Level,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("gender")] string Gender
+    );
+
+    public record Friendship(
+        [property: JsonPropertyName("friend")] Friend Friend,
+        [property: JsonPropertyName("startedAt")] DateTimeOffset? StartedAt
+    );
+
+    public record LastVisit(
+        [property: JsonPropertyName("visitor")] Visitor Visitor,
+        [property: JsonPropertyName("lastVisitAt")] DateTimeOffset? LastVisitAt
+    );
+
+    public record OnlineStatus(
+        [property: JsonPropertyName("lastSeenAt")] DateTimeOffset? LastSeenAt
+    );
+
+    public record Owner(
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("id")] long? Id,
+        [property: JsonPropertyName("roles")] IReadOnlyList<Role> Roles,
+        [property: JsonPropertyName("gender")] string Gender
+    );
+
+    public record Role(
+        [property: JsonPropertyName("type")] string Type
+    );
+
+    public record Profile(
+        [property: JsonPropertyName("id")] long? Id,
+        [property: JsonPropertyName("roles")] IReadOnlyList<Role> Roles,
+        [property: JsonPropertyName("avatarUrl")]
+        object AvatarUrl,
+        [property: JsonPropertyName("level")] int? Level,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("gender")] string Gender,
+        [property: JsonPropertyName("discordConnection")]
+        DiscordConnection DiscordConnection,
+        [property: JsonPropertyName("about")] object About,
+        [property: JsonPropertyName("silver")] int? Silver,
+        [property: JsonPropertyName("rubies")] int? Rubies,
+        [property: JsonPropertyName("achievements")]
+        IReadOnlyList<Achievement> Achievements,
+        [property: JsonPropertyName("createdAt")]
+        DateTimeOffset? CreatedAt,
+        [property: JsonPropertyName("dragons")]
+        IReadOnlyList<Dragon> Dragons,
+        [property: JsonPropertyName("onlineStatus")]
+        OnlineStatus OnlineStatus,
+        [property: JsonPropertyName("uniqueVisitorsCount")]
+        int? UniqueVisitorsCount,
+        [property: JsonPropertyName("lastVisits")]
+        IReadOnlyList<LastVisit> LastVisits,
+        [property: JsonPropertyName("friendships")]
+        IReadOnlyList<Friendship> Friendships,
+        [property: JsonPropertyName("banned")] bool? Banned
+    )
     {
-        return new Profile
+        public Profile() : this(0, new List<Role>(), new object(), 0, "", "", new DiscordConnection("", "", "", "", "", new object(), null, new object()), new object(), 0, 0, new List<Achievement>(), null, new List<Dragon>(), new OnlineStatus(null), 0, new List<LastVisit>(), new List<Friendship>(), false)
         {
-            Id = 0,
-            Name = "",
-            HasUnfairAdvantage = false,
-            Gender = "",
-            Silver = 0,
-            Rubies = 0,
-            Newsletter = false,
-            HasFreeDragonLimitExpansion = false,
-            BoughtDragonLimitExpansion = 0,
-            AdminDragonLimitExpansion = 0,
-            NextNameChangePrice = 0,
-            HieroglyphChangePrice = 0,
-            LastHieroglyphChangePriceResetAt = default,
-            Level = 0,
-            Xp = 0,
-            TotalXp = 0,
-            CreatedAt = default,
-            RemainingBattles = 0,
-            LastRemainingBattlesResetAt = default,
-            RemainingFeedXpGains = 0,
-            LastRemainingFeedXpGainsResetAt = default,
-            Roles = Array.Empty<Role>()
-        };
+            
+        }
+        public static Profile CreateEmpty() => new();
     }
-    
-    public static bool IsEmpty(Profile profile) => profile.Id == 0;
-}
+
+    public record Visitor(
+        [property: JsonPropertyName("id")] int? Id,
+        [property: JsonPropertyName("roles")] IReadOnlyList<object> Roles,
+        [property: JsonPropertyName("avatarUrl")] string AvatarUrl,
+        [property: JsonPropertyName("level")] int? Level,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("gender")] string Gender
+    );
+

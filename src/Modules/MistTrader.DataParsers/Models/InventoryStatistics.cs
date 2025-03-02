@@ -9,9 +9,9 @@ public class InventoryStatistics
 
     public void Calculate(IEnumerable<InventoryItem> inventoryItems)
     {
-        TotalValue = inventoryItems.Sum(item => item.Silver * item.Count);
-        TotalCount = inventoryItems.Sum(item => item.Count);
-        ItemCount = inventoryItems.Count();
+        var itemsArray = inventoryItems.ToArray();
+        TotalCount = itemsArray.Sum(item => item.Count);
+        ItemCount = itemsArray.Count();
         AverageValue = ItemCount > 0 ? (double)TotalValue / ItemCount : 0;
     }
 }

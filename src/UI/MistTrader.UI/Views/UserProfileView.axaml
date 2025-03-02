@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MistTrader.UI.ViewModels.UserContext"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="100"
+             x:Class="MistTrader.UI.Views.UserProfileView"
+             x:DataType="vm:UserProfileViewModel">
+
+    <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+          Margin="8">
+        
+        <!-- Name and Level -->
+        <StackPanel Grid.Column="0" 
+                    Orientation="Horizontal" 
+                    Spacing="8">
+            <TextBlock Text="{Binding Name}"
+                       Classes="h2"/>
+            <TextBlock Text="{Binding Level, StringFormat='Level {0}'}"
+                       Classes="h2"/>
+        </StackPanel>
+
+        <!-- Spacer -->
+        <Grid Grid.Column="1"/>
+
+        <!-- Silver -->
+        <StackPanel Grid.Column="2" 
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Margin="8,0">
+            <PathIcon Data="{StaticResource CoinRegularIcon}"
+                      Classes="silver"/>
+            <TextBlock Text="{Binding Silver}"
+                       Classes="h2"/>
+        </StackPanel>
+
+        <!-- Rubies -->
+        <StackPanel Grid.Column="3" 
+                    Orientation="Horizontal"
+                    Spacing="4">
+            <PathIcon Data="{StaticResource DiamondRegularIcon}"
+                      Classes="ruby"/>
+            <TextBlock Text="{Binding Rubies}"
+                       Classes="h2"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

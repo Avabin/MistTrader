@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MistTrader.UI.ViewModels.UserContext"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="MistTrader.UI.Views.UserContextView"
+             x:DataType="vm:UserContextViewModel">
+
+    <Grid Background="{DynamicResource BackgroundGradient}" 
+          RowDefinitions="Auto,*">
+        
+        <!-- Profile Section -->
+        <Border Grid.Row="0"
+                Classes="card"
+                Margin="8">
+            <ContentControl Content="{Binding ProfileViewModel}"/>
+        </Border>
+
+        <!-- Lower Section with Inventory and Transactions -->
+        <Grid Grid.Row="1" 
+              ColumnDefinitions="*,*"
+              Margin="0,8,0,0">
+              
+            <!-- Inventory Section -->
+            <Border Grid.Column="0"
+                    Classes="card"
+                    Margin="8,0,4,8">
+                <ContentControl Content="{Binding InventoryViewModel}"/>
+            </Border>
+
+            <!-- Transactions Section -->
+            <Border Grid.Column="1"
+                    Classes="card"
+                    Margin="4,0,8,8">
+                <ContentControl Content="{Binding TransactionsViewModel}"/>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
