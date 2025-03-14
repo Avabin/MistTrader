@@ -5,6 +5,7 @@ using MediatR;
 using MistTrader.Proxy.Commands;
 using MistTrader.Proxy.Notifications;
 using MistTrader.UI.ViewModels;
+using MistTrader.UI.ViewModels.MessageBoxes;
 using MistTrader.UI.ViewModels.Proxy;
 using NSubstitute;
 using ReactiveUI;
@@ -89,12 +90,13 @@ public class ProxyViewModelTests
     {
         // Arrange
         const int defaultPort = 8080;
+        _messageBoxService.ShowAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<MessageBoxButton>()).ReturnsForAnyArgs(MessageBoxResult.Ok);
         
         // Act
         await _viewModel.StartProxyCommand.Execute();
 
         // Assert
-        await _mediator.Received(1).Send(Arg.Is<StartProxy>(cmd => cmd.Port == defaultPort));
+        await _mediator.Received(1).Send(Arg.Is<StartProxy>(cmd => cmd.Port == defaultPort), Arg.Any<CancellationToken>());
         _viewModel.Status.Should().Be("Starting...");
     }
 

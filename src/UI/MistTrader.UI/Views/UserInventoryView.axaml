@@ -10,8 +10,6 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Text="Inventory" Classes="h1"/>
-            <Button Content="Download icons" Command="{Binding LoadIconsCommand}"></Button>
-            
         </StackPanel>
         <ScrollViewer>
             <ItemsRepeater ItemsSource="{Binding InventoryItems}">

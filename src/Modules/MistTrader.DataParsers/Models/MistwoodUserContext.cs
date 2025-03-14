@@ -89,7 +89,7 @@ public record MistwoodUserContext
         {
             Transactions = Array.Empty<Transaction>(),
             Inventory = Array.Empty<InventoryItem>(),
-            Profile = Profile.CreateEmpty(),
+            Profile = Profile.Empty,
             LastUpdated = DateTime.UtcNow
         };
 }

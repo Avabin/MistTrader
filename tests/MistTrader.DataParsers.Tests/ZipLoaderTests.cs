@@ -45,9 +45,9 @@ public class ZipLoaderTests
 
         var inventory = new[]
         {
-            CreateInventoryItem("CrystalWater", 50, 1, false, false, 70),
-            CreateInventoryItem("PandoraBox", 1, 1, true, false, 130000),
-            CreateInventoryItem("SoulBoundItem", 1, 5, true, true, 1000),
+            CreateInventoryItem("CrystalWater", 50),
+            CreateInventoryItem("PandoraBox", 1),
+            CreateInventoryItem("SoulBoundItem", 1),
         };
 
         var profile = CreateTestProfile();
@@ -120,15 +120,7 @@ public class ZipLoaderTests
         result.Should().NotBeNull()
             .And.HaveCount(3);
 
-        result.Should().ContainEquivalentOf(new InventoryItemDetails
-        {
-            ItemId = "CrystalWater",
-            Count = 50,
-            Level = 1,
-            IsIdentified = false,
-            SoulBound = false,
-            Silver = 70
-        });
+        result.Should().ContainEquivalentOf(new InventoryItem(ItemId: "CrystalWater", Count: 50));
     }
 
     [Test]
@@ -200,38 +192,14 @@ public class ZipLoaderTests
 
         profile.Should().BeEquivalentTo(CreateTestProfile());
         transactions.Should().BeInAscendingOrder(t => t.Id);
-        inventory.Should().Contain(i => i.ItemId == "SoulBoundItem" && i.SoulBound);
     }
 
     private static Profile CreateTestProfile()
     {
-        return new Profile
+        return Profile.Empty with
         {
             Id = 6305,
-            Name = "Avabin",
-            HasUnfairAdvantage = false,
-            AvatarUrl = null,
-            PendingAvatarUrl = null,
-            Gender = "Unspecified",
-            About = null,
-            Silver = 218066,
-            Rubies = 22,
-            Newsletter = false,
-            HasFreeDragonLimitExpansion = false,
-            BoughtDragonLimitExpansion = 1,
-            AdminDragonLimitExpansion = 0,
-            NextNameChangePrice = 31,
-            HieroglyphChangePrice = 0,
-            LastHieroglyphChangePriceResetAt = DateTime.Parse("2025-02-21T16:55:23.565Z"),
-            Level = 18,
-            Xp = 1666,
-            TotalXp = 72366,
-            CreatedAt = DateTime.Parse("2024-01-21T16:14:58.547Z"),
-            RemainingBattles = 602,
-            LastRemainingBattlesResetAt = DateTime.Parse("2025-02-18T08:50:58.037Z"),
-            RemainingFeedXpGains = 0,
-            LastRemainingFeedXpGainsResetAt = DateTime.Parse("2025-02-21T16:55:24.052Z"),
-            Roles = new List<Role>()
+            Name = "TestUser",
         };
     }
 
@@ -267,22 +235,10 @@ public class ZipLoaderTests
         };
     }
 
-    private static InventoryItemDetails CreateInventoryItem(
+    private static InventoryItem CreateInventoryItem(
         string itemId,
-        int count,
-        int level,
-        bool isIdentified,
-        bool soulBound,
-        long silver)
+        int count)
     {
-        return new InventoryItemDetails
-        {
-            ItemId = itemId,
-            Count = count,
-            Level = level,
-            IsIdentified = isIdentified,
-            SoulBound = soulBound,
-            Silver = silver
-        };
+        return new InventoryItem(ItemId: itemId, Count: count);
     }
 }

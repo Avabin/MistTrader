@@ -31,7 +31,7 @@ public class MistwoodUserContextTests
 
         _context = new MistwoodUserContext
         {
-            Profile = Profile.CreateEmpty() with
+            Profile = Profile.Empty with
             {
                 Id = _testBreederId,
                 Name = _testUsername
@@ -67,17 +67,6 @@ public class MistwoodUserContextTests
 
         // Assert
         totalProfitLoss.Should().Be(325); // Only profit from CrystalWater trades
-    }
-
-    [Test]
-    public void CalculateInventoryValue_ShouldSumAllItemValues()
-    {
-        // Act
-        var totalValue = _context.CalculateInventoryValue();
-
-        // Assert
-        var expectedValue = (50 * 70) + (1 * 130000); // CrystalWater + PandoraBox
-        totalValue.Should().Be(expectedValue);
     }
 
     [Test]
@@ -124,7 +113,7 @@ public class MistwoodUserContextTests
         // Act
         var emptyContext = MistwoodUserContext.CreateEmpty() with
         {
-            Profile = Profile.CreateEmpty() with { Id = _testBreederId, Name = _testUsername }
+            Profile = Profile.Empty with { Id = _testBreederId, Name = _testUsername }
         };
 
         // Assert
@@ -169,7 +158,7 @@ public class MistwoodUserContextTests
         };
     }
 
-    private static InventoryItemDetails CreateInventoryItem(
+    private static InventoryItem CreateInventoryItem(
         string itemId,
         int count,
         int level,
@@ -177,14 +166,6 @@ public class MistwoodUserContextTests
         bool soulBound,
         long silver)
     {
-        return new InventoryItemDetails
-        {
-            ItemId = itemId,
-            Count = count,
-            Level = level,
-            IsIdentified = isIdentified,
-            SoulBound = soulBound,
-            Silver = silver
-        };
+        return new InventoryItem(ItemId: itemId, Count: count);
     }
 }
