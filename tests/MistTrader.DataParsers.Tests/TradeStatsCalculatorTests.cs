@@ -72,7 +72,6 @@ public class TradeStatsCalculatorTests
             ProfitLoss = 0,
             MedianPrice = 75,
             StandardDeviation = 4.166666666666666,
-            TotalTransactionValue = 2275
         });
 
         var pandoraBoxStats = stats["PandoraBox"];
@@ -93,8 +92,7 @@ public class TradeStatsCalculatorTests
             TotalEarned = 0,
             ProfitLoss = 0,
             MedianPrice = 130000,
-            StandardDeviation = 0,
-            TotalTransactionValue = 130000
+            StandardDeviation = 0
         });
     }
 
@@ -138,8 +136,7 @@ public class TradeStatsCalculatorTests
             TotalEarned = 1900, // (10 * 70) + (15 * 80) = 700 + 1200
             ProfitLoss = 1525, // 1900 - 375
             MedianPrice = 75,
-            StandardDeviation = 4.166666666666666,
-            TotalTransactionValue = 2275
+            StandardDeviation = 4.166666666666666
         });
 
         var pandoraBoxStats = personalStats["PandoraBox"];
@@ -160,8 +157,7 @@ public class TradeStatsCalculatorTests
             TotalEarned = 0,
             ProfitLoss = 0,
             MedianPrice = 130000,
-            StandardDeviation = 0,
-            TotalTransactionValue = 130000
+            StandardDeviation = 0
         });
     }
 
@@ -286,7 +282,7 @@ public class TradeStatsCalculatorTests
     }
 
     [Test]
-    public async Task CalculateStats_ShouldCalculateTotalTransactionValue()
+    public async Task CalculateStats_ShouldCalculateTotalVolume()
     {
         // Arrange
         var transactions = new[]
@@ -312,7 +308,7 @@ public class TradeStatsCalculatorTests
 
         // Assert
         var itemStats = stats["TestItem"];
-        itemStats.TotalTransactionValue.Should().Be(600);
+        itemStats.TotalVolume.Should().Be(600);
     }
 
     [Test]

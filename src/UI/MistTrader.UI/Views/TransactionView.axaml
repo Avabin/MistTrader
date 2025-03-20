@@ -3,14 +3,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userContext="clr-namespace:MistTrader.UI.ViewModels.UserContext;assembly=MistTrader.UI.ViewModels"
+             xmlns:converters="clr-namespace:MistTrader.UI.Converters"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="60"
              x:Class="MistTrader.UI.Views.TransactionView"
              x:DataType="userContext:TransactionViewModel">
+    <UserControl.Resources>
+        <converters:TradeMakerToIconConverter x:Key="TradeMakerToIconConverter"/>
+    </UserControl.Resources>
     <Border Classes="transaction-item">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <PathIcon Grid.Column="0"
                       Classes="transaction-icon"
-                      Data="{StaticResource ArrowCircleUpRegularIcon}"/>
+                      Data="{Binding Maker, Converter={StaticResource TradeMakerToIconConverter}}"/>
             <StackPanel Grid.Column="1" Margin="12,0">
                 <TextBlock Text="{Binding Maker}" Classes="transaction-description"/>
                 <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:g}}" Classes="transaction-timestamp"/>

@@ -5,7 +5,6 @@ namespace MistTrader.UI.ViewModels.Proxy;
 
 public class MistwoodResponseViewModel : ViewModel
 {
-    private JsonResponseCaptured _captured;
     [Reactive] public Uri Url { get; set; }
     [Reactive] public DateTimeOffset Timestamp { get; set; }
     
@@ -16,7 +15,5 @@ public class MistwoodResponseViewModel : ViewModel
         Url = captured.Url;
         Timestamp = captured.Timestamp;
         ResponseLength = (ulong)captured.Response.Length;
-        
-        _captured = captured;
     }
 }

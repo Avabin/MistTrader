@@ -1,16 +1,17 @@
-﻿using DataParsers.Models;
+﻿using System.Collections.Concurrent;
+using DataParsers.Models;
 using System.Linq;
 
 namespace DataParsers;
 
 public static class TradeStatsCalculator
 {
-    public static Dictionary<string, TransactionStats> CalculateStats(IEnumerable<Transaction> transactions)
+    public static Dictionary<string, TransactionStats> CalculateStatsA(IEnumerable<Transaction> transactions)
     {
         var stats = new Dictionary<string, TransactionStats>();
 
-        var transationsArray = transactions as Transaction[] ?? transactions.ToArray();
-        foreach (var transaction in transationsArray)
+        var transactionsArray = transactions as Transaction[] ?? transactions.ToArray();
+        foreach (var transaction in transactionsArray)
         {
             var itemId = transaction.SellOffer.ItemId;
 
@@ -29,7 +30,6 @@ public static class TradeStatsCalculator
                     LastTransaction = transaction.CreatedAt,
                     MedianPrice = transaction.Silver,
                     StandardDeviation = 0,
-                    TotalTransactionValue = transaction.Silver * transaction.Count,
                     TotalBought = 0,
                     TotalSpent = 0,
                     TotalSold = 0,
@@ -44,7 +44,7 @@ public static class TradeStatsCalculator
             var newTransactionCount = currentStats.TransactionCount + 1;
             var newAveragePrice = (double)newTotalVolume / newTotalCount;
 
-            var prices = transationsArray.Where(t => t.SellOffer.ItemId == itemId).Select(t => t.Silver).OrderBy(p => p).ToList();
+            var prices = transactionsArray.Where(t => t.SellOffer.ItemId == itemId).Select(t => t.Silver).OrderBy(p => p).ToList();
             var medianPrice = prices.Count % 2 == 0
                 ? (prices[prices.Count / 2 - 1] + prices[prices.Count / 2]) / 2.0
                 : prices[prices.Count / 2];
@@ -67,11 +67,40 @@ public static class TradeStatsCalculator
                     ? transaction.CreatedAt
                     : currentStats.LastTransaction,
                 MedianPrice = medianPrice,
-                StandardDeviation = standardDeviation,
-                TotalTransactionValue = newTotalVolume
+                StandardDeviation = standardDeviation
             };
         }
 
+        return stats;
+    }
+
+    public static Dictionary<string, TransactionStats> CalculateStats(IReadOnlyList<Transaction> transactions)
+    {
+        var grouped = transactions.GroupBy(t => t.SellOffer.ItemId).ToArray();
+        
+        var concurrentDictionary = new ConcurrentDictionary<string, TransactionStats>();
+        
+        Parallel.ForEach(grouped, g =>
+        {
+            var stats = TransactionStats.Empty.Apply(g.ToList());
+            
+            concurrentDictionary.TryAdd(g.Key, stats);
+        });
+        
+        return concurrentDictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    }
+    
+    public static TransactionStats CalculateStat(IReadOnlyList<Transaction> transactions)
+    {
+        // only for single itemid
+        var itemIds = transactions.Select(t => t.SellOffer.ItemId).Distinct().ToArray();
+        if (itemIds.Length > 1)
+        {
+            throw new InvalidOperationException("Only one itemid is allowed");
+        }
+        
+        var stats = TransactionStats.Empty.Apply(transactions);
+        
         return stats;
     }
 
@@ -82,10 +111,10 @@ public static class TradeStatsCalculator
     {
         var personalStats = new Dictionary<string, TransactionStats>();
 
-        var transationsArray = transactions as Transaction[] ?? transactions.ToArray();
+        var transactionsArray = transactions as Transaction[] ?? transactions.ToArray();
         foreach (var (itemId, marketStat) in marketStats)
         {
-            var itemTransactions = transationsArray.Where(t => t.SellOffer.ItemId == itemId).ToList();
+            var itemTransactions = transactionsArray.Where(t => t.SellOffer.ItemId == itemId).ToList();
             var bought = itemTransactions
                 .Where(t => t.BuyOffer.BreederId == breederId)
                 .ToList();

@@ -25,6 +25,7 @@ public class ViewModelsModule : Module
         builder.RegisterType<InventoryItemViewModel>();
         builder.RegisterType<UserTransactionsViewModel>();
         builder.RegisterType<TransactionViewModel>();
+        builder.RegisterType<TransactionStatsViewModel>();
         
     }
 }

@@ -3,5 +3,6 @@
     <StreamGeometry x:Key="CoinRegularIcon">M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z</StreamGeometry>
     <StreamGeometry x:Key="DiamondRegularIcon">M17.813 6.088l-3.456-3.456a2 2 0 0 0-2.828 0L4.087 9.073a2 2 0 0 0 0 2.828l6.541 6.541a2 2 0 0 0 2.828 0l6.541-6.541a2 2 0 0 0 0-2.828zM12 17.657L6.343 12 12 6.343 17.657 12 12 17.657z</StreamGeometry>
     <StreamGeometry x:Key="ArrowCircleUpRegularIcon">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M16,13H13V16H11V13H8L12,9L16,13Z</StreamGeometry>
+    <StreamGeometry x:Key="ArrowCircleDownRegularIcon">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M16,11L12,15L8,11H11V8H13V11H16Z</StreamGeometry>
 
 </ResourceDictionary>

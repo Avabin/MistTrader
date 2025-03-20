@@ -24,7 +24,6 @@ public class ReactiveTradesParser : IReactiveTradesParser
             var stats = grouped.ToDictionary(g => g.Key, g => new TransactionStats
             {
                 TotalCount = g.Sum(t => t.Count),
-                TotalTransactionValue = g.Sum(t => t.Count * t.SellOffer.Silver),
                 AveragePrice = g.Average(t => t.SellOffer.Silver),
                 MinPrice = g.Min(t => t.SellOffer.Silver),
                 MaxPrice = g.Max(t => t.SellOffer.Silver),

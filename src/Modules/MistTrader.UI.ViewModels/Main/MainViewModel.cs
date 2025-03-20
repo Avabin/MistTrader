@@ -17,13 +17,16 @@ public partial class MainViewModel : ViewModel, IScreen, IActivatableViewModel
     [Reactive] public bool CanNavigateTo { get; set; } = false;
 
     [Reactive] public RoutingState Router { get; set; } = new();
+    
     public ViewModelActivator Activator { get; } = new();
-    public MainViewModel(Func<ProxyViewModel> proxyViewModelFactory, Func<UserContextViewModel> userContextFactory)
+    
+    public delegate MainViewModel Factory();
+    public MainViewModel(Lazy<ProxyViewModel> proxyVmLazy, Lazy<UserContextViewModel> userContextVmLazy)
     {
         this.WhenActivated((CompositeDisposable d) =>
         {
-            ProxyViewModel ??= proxyViewModelFactory();
-            UserContextViewModel ??= userContextFactory();
+            ProxyViewModel ??= proxyVmLazy.Value;
+            UserContextViewModel ??= userContextVmLazy.Value;
             
             CanNavigateTo = true;
         });

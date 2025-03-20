@@ -31,7 +31,7 @@ public class UserContextViewModel : ViewModel, IActivatableViewModel, IRoutableV
         _inventoryFactory = inventoryFactory;
         _userContextService = userContextService;
         
-        ViewForMixins.WhenActivated((IActivatableViewModel)this, (CompositeDisposable d) =>
+        this.WhenActivated((d) =>
         {
             InventoryViewModel ??= _inventoryFactory();
             
@@ -52,8 +52,8 @@ public class UserContextViewModel : ViewModel, IActivatableViewModel, IRoutableV
             
             var transactionDataExtracted = _userContextService.TransactionDataExtracted;
             transactionDataExtracted
-                .Select(x => x.Transactions)
-                .InvokeCommand<ImmutableList<Transaction>, Unit>(TransactionsViewModel.MergeTransactionsCommand)
+                .Select(x => x.Transactions.ToList())
+                .InvokeCommand<IReadOnlyList<Transaction>, Unit>(TransactionsViewModel.MergeTransactionsCommand)
                 .DisposeWith(d);
         });
     }

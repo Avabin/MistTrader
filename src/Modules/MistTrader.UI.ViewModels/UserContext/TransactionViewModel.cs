@@ -12,6 +12,7 @@ public class TransactionViewModel : ViewModel
     [Reactive] public int Count { get; set; }
     [Reactive] public DateTime CreatedAt { get; set; }
     [Reactive] public string Maker { get; set; }
+    [Reactive] public string ItemId { get; set; }
     
     public delegate TransactionViewModel Factory(Transaction transaction);
     public TransactionViewModel(Transaction transaction)
@@ -23,5 +24,8 @@ public class TransactionViewModel : ViewModel
         Count = transaction.Count;
         CreatedAt = transaction.CreatedAt;
         Maker = transaction.Maker;
+        ItemId = transaction.BuyOffer.ItemId;
     }
+    
+    public Transaction ToTransaction() => _transaction;
 }

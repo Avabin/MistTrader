@@ -1,6 +1,6 @@
 namespace DataParsers.Models;
 
-public class InventoryStatistics
+public record InventoryStatistics
 {
     public int TotalCount { get; set; }
     public int ItemCount { get; set; }
