@@ -1,3 +1,5 @@
+using DataParsers.Models.Messages;
+
 namespace DataParsers.Models;
 
 /// <summary>
@@ -29,6 +31,11 @@ public record MistwoodUserContext
     /// Current inventory state
     /// </summary>
     public required IReadOnlyList<InventoryItem> Inventory { get; init; }
+    
+    /// <summary>
+    /// Current messages for the user
+    /// </summary>
+    public required IReadOnlyList<MessageModel> Messages { get; init; }
     
     /// <summary>
     /// Last updated timestamp in UTC
@@ -82,6 +89,23 @@ public record MistwoodUserContext
     }
     
     /// <summary>
+    /// Creates a new MistwoodUserContext with added messages
+    /// </summary>
+    public MistwoodUserContext WithNewMessages(IReadOnlyList<MessageModel> newMessages)
+    {
+        var allMessages = Messages.Concat(newMessages)
+            .OrderByDescending(m => m.CreatedAt)
+            .DistinctBy(x => x.Id)
+            .ToList();
+            
+        return this with
+        {
+            Messages = allMessages,
+            LastUpdated = DateTime.UtcNow
+        };
+    }
+    
+    /// <summary>
     /// Creates an empty context for a user
     /// </summary>
     public static MistwoodUserContext CreateEmpty() =>
@@ -90,6 +114,7 @@ public record MistwoodUserContext
             Transactions = Array.Empty<Transaction>(),
             Inventory = Array.Empty<InventoryItem>(),
             Profile = Profile.Empty,
-            LastUpdated = DateTime.UtcNow
+            LastUpdated = DateTime.UtcNow,
+            Messages = Array.Empty<MessageModel>()
         };
 }

@@ -1,4 +1,5 @@
 using DataParsers.Models;
+using DataParsers.Models.Messages;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -38,7 +39,8 @@ public class MistwoodUserContextTests
             },
             Transactions = transactions,
             Inventory = inventory,
-            LastUpdated = DateTime.UtcNow
+            LastUpdated = DateTime.UtcNow,
+            Messages = new List<MessageModel>()
         };
     }
 

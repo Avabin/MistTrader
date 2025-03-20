@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Riok.Mapperly" Version="4.1.1" />
       <PackageReference Include="System.Reactive" Version="6.0.1" />
     </ItemGroup>
 

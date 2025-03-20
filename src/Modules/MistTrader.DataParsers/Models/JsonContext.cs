@@ -30,6 +30,20 @@ namespace DataParsers.Models;
 [JsonSerializable(typeof(Friendship))]
 [JsonSerializable(typeof(Friendship[]))]
 [JsonSerializable(typeof(IReadOnlyList<Friendship>))]
+
+[JsonSerializable(typeof(Messages.MessagesData))]
+[JsonSerializable(typeof(Messages.MessageModel))]
+[JsonSerializable(typeof(Messages.MessageModel[]))]
+[JsonSerializable(typeof(List<Messages.MessageModel>))]
+[JsonSerializable(typeof(Messages.UserModel))]
+[JsonSerializable(typeof(Messages.UserModel[]))]
+[JsonSerializable(typeof(List<Messages.UserModel>))]
+[JsonSerializable(typeof(Messages.DragonModel))]
+[JsonSerializable(typeof(Messages.DragonModel[]))]
+[JsonSerializable(typeof(List<Messages.DragonModel>))]
+[JsonSerializable(typeof(Messages.AttachmentModel))]
+[JsonSerializable(typeof(Messages.AttachmentModel[]))]
+[JsonSerializable(typeof(List<Messages.AttachmentModel>))]
 public partial class JsonContext : JsonSerializerContext
 {
 }

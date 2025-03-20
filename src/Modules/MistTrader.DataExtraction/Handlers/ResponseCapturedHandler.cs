@@ -34,7 +34,7 @@ internal class ResponseCapturedHandler : INotificationHandler<JsonResponseCaptur
         if (maybeData.IsT0)
         {
             var data = maybeData.AsT0;
-            var (profile, inventory, transactions) = data;
+            var (profile, inventory, transactions, _) = data;
             
             await PublishProfileData(profile, cancellationToken);
             await PublishInventoryData(inventory, cancellationToken);
@@ -68,5 +68,3 @@ internal class ResponseCapturedHandler : INotificationHandler<JsonResponseCaptur
         await _mediator.Publish(n, cancellationToken);
     }
 }
-
-public record ExtractionErrorOccured(string Message, ExtractionError Error) : INotification;
